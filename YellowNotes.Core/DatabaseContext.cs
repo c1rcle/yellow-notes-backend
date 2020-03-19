@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using YellowNotes.Core.Models;
 
 namespace YellowNotes.Core
 {
