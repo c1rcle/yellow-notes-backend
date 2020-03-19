@@ -1,13 +1,15 @@
+using System.Threading.Tasks;
+using YellowNotes.Core.Dtos;
 using YellowNotes.Core.Models;
 
 namespace YellowNotes.Core.Repositories
 {
     public interface IUserRepository
     {
-        bool CreateUser(User user);
+        Task<bool> CreateUser(User user);
 
-        bool VerifyPassword(User user);
+        Task<bool> VerifyPassword(UserDto user);
 
-        bool ChangePassword(User user);
+        Task<bool> ChangePassword(UserDto user);
     }
 }
