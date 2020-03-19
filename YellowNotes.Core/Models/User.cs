@@ -7,7 +7,6 @@ namespace YellowNotes.Core.Models
     public class User
     {
         [Key]
-        [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
         [Required]
