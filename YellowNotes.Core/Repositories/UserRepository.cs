@@ -27,9 +27,8 @@ namespace YellowNotes.Core.Repositories
             var record = await context.Users
                 .SingleOrDefaultAsync(x => x.Email == user.Email);
 
-            if (record == null) return false;
-            else if (!Crypto.VerifyHashedPassword(record.PasswordHash, user.Password)) return false;
-            return true;
+            return record != null && 
+                Crypto.VerifyHashedPassword(record.PasswordHash, user.Password);
         }
 
         public async Task<bool> ChangePassword(UserDto user)
