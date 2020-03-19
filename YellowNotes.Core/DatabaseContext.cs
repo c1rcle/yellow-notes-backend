@@ -15,7 +15,6 @@ namespace YellowNotes.Core
         {
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasKey(e => e.Id).HasName("PK_Users");
                 entity.Property(e => e.Email).IsUnicode(false);
                 entity.Property(e => e.PasswordHash).IsUnicode(false); 
             });
