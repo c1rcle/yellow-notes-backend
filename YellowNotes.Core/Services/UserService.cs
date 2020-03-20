@@ -18,7 +18,7 @@ namespace YellowNotes.Core.Services
             return await repository.CreateUser(new User
             {
                 Email = user.Email,
-                AccountCreationDate = DateTime.Now,
+                RegistrationDate = DateTime.Now,
                 PasswordHash = Crypto.HashPassword(user.Password)
             });
         }

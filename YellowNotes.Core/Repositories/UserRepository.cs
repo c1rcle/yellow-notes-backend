@@ -14,10 +14,10 @@ namespace YellowNotes.Core.Repositories
 
         public async Task<bool> CreateUser(User user)
         {
-            var result = await context.Users
+            var emailExists = await context.Users
                 .AnyAsync(x => x.Email == user.Email);
 
-            if (result) return false;
+            if (emailExists) return false;
             context.Users.Add(user);
             return await context.SaveChangesAsync() > 0;
         }
