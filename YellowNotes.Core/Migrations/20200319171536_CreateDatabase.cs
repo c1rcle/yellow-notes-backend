@@ -12,7 +12,7 @@ namespace YellowNotes.Core.Migrations
                 columns: table => new
                 {
                     Email = table.Column<string>(unicode: false, nullable: false),
-                    AccountCreationDate = table.Column<DateTime>(nullable: false),
+                    RegistrationDate = table.Column<DateTime>(nullable: false),
                     PasswordHash = table.Column<string>(unicode: false, nullable: false)
                 },
                 constraints: table =>

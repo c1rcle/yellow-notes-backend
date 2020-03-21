@@ -25,7 +25,7 @@ namespace YellowNotes.Core.Migrations
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4")
                         .IsUnicode(false);
 
-                    b.Property<DateTime>("AccountCreationDate")
+                    b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("PasswordHash")
