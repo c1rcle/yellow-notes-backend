@@ -1,5 +1,4 @@
-﻿
-namespace YellowNotes.Core
+﻿namespace YellowNotes.Core
 {
     public class EmailMessage
     {
