@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using System.Threading;
 using YellowNotes.Core.Email;
 using MimeKit;
 using MailKit.Net.Smtp;
@@ -14,7 +15,7 @@ namespace YellowNotes.Core.Services
             _emailConfiguration = emailConfiguration;
         }
 
-        public async Task SendEmail(EmailMessage emailMessage)
+        public async Task SendEmail(EmailMessage emailMessage, CancellationToken cancellationToken)
         {
             var email = new MimeMessage();
             email.From.Add(new MailboxAddress(emailMessage.fromEmailAddress));
@@ -29,11 +30,11 @@ namespace YellowNotes.Core.Services
             using (var client = new SmtpClient())
 	        {
                 client.ServerCertificateValidationCallback = (sender, certificate, certChainType, errors) => true;
-                await client.ConnectAsync(_emailConfiguration.SmtpServer, _emailConfiguration.SmtpPort, false);
-                await client.AuthenticateAsync(_emailConfiguration.SmtpUsername, _emailConfiguration.SmtpPassword);
+                await client.ConnectAsync(_emailConfiguration.SmtpServer, _emailConfiguration.SmtpPort, false, cancellationToken);
+                await client.AuthenticateAsync(_emailConfiguration.SmtpUsername, _emailConfiguration.SmtpPassword, cancellationToken);
 
-		        await client.SendAsync(email);
-                await client.DisconnectAsync(true);
+		        await client.SendAsync(email, cancellationToken);
+                await client.DisconnectAsync(true, cancellationToken);
             }
         }
     }
