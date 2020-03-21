@@ -4,6 +4,10 @@
     <ProjectReference Include="..\YellowNotes.Core\YellowNotes.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>YellowNotes.Api</RootNamespace>
