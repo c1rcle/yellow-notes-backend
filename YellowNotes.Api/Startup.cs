@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using YellowNotes.Core;
+using YellowNotes.Core.Email;
+using YellowNotes.Core.Services;
 
 namespace YellowNotes.Api
 {
@@ -22,7 +24,8 @@ namespace YellowNotes.Api
             services.AddControllers();
             services.AddDbContextPool<DatabaseContext>(options => 
                 options.UseMySql(Configuration.GetConnectionString("Development")));
-            services.AddTransient<YellowNotes.Core.Services.IEmailService, YellowNotes.Core.Services.EmailService>();
+            services.AddSingleton<IEmailConfiguration>(Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>());
+            services.AddTransient<IEmailService, EmailService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
