@@ -8,9 +8,9 @@ namespace YellowNotes.Core.Services
 {
     public class EmailService : IEmailService
     {
-        private readonly IEmailConfiguration _emailConfiguration;
+        private readonly EmailConfiguration _emailConfiguration;
 
-        public EmailService(IEmailConfiguration emailConfiguration)
+        public EmailService(EmailConfiguration emailConfiguration)
         {
             _emailConfiguration = emailConfiguration;
         }
