@@ -6,7 +6,7 @@ using YellowNotes.Core.Services;
 namespace YellowNotes.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/users")]
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;
@@ -16,11 +16,10 @@ namespace YellowNotes.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> CreateUser([FromBody] UserDto userDto)
         {
-            bool valid = ModelState.IsValid; 
-            if (!valid)
+            if (!ModelState.IsValid)
                 return BadRequest("User data is not valid");
 
-            bool success = await this.userService.CreateUser(userDto);
+            bool success = await userService.CreateUser(userDto);
             if (!success)
                 return BadRequest("User cannot be created"); 
 
@@ -30,11 +29,10 @@ namespace YellowNotes.Api.Controllers
         [HttpPost("authenticate")]
         public async Task<IActionResult> VerifyPassword([FromBody] UserDto userDto)
         {
-            bool valid = ModelState.IsValid;
-            if (!valid)
+            if (!ModelState.IsValid)
                 return BadRequest("User data is not valid");
 
-            bool success = await this.userService.VerifyPassword(userDto);
+            bool success = await userService.VerifyPassword(userDto);
             if (!success)
                 return BadRequest("Verification has failed");
 
@@ -44,11 +42,10 @@ namespace YellowNotes.Api.Controllers
         [HttpPut]
         public async Task<IActionResult> ChangePassword([FromBody] UserDto userDto)
         {
-            bool valid = ModelState.IsValid;
-            if (!valid)
+            if (!ModelState.IsValid)
                 return BadRequest("User data is not valid");
 
-            bool success = await this.userService.ChangePassword(userDto);
+            bool success = await userService.ChangePassword(userDto);
             if (!success)
                 return BadRequest("Failed to change password");
 
