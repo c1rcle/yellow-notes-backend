@@ -2,9 +2,9 @@
 {
     public class EmailMessage
     {
-        public string fromEmailAddress { get; set; }
-        public string toEmailAddress { get; set; }
-        public string subject { get; set; }
-        public string content { get; set; }
+        public string FromEmailAddress { get; set; }
+        public string ToEmailAddress { get; set; }
+        public string Subject { get; set; }
+        public string Content { get; set; }
     }
 }
