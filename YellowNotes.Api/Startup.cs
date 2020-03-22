@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,8 @@ namespace YellowNotes.Api
         {
             services.AddControllers();
             services.AddDbContextPool<DatabaseContext>(options => 
-                options.UseMySql(Configuration.GetConnectionString("Development")));
+            options.UseMySql(Configuration.GetValue<string>("ConnectionString")));
+            
             services.Configure<EmailConfiguration>(Configuration.GetSection("EmailConfiguration"));
             services.AddSingleton<IEmailService, EmailService>();
         }
