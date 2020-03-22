@@ -16,9 +16,13 @@ namespace YellowNotes.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> CreateUser([FromBody] UserDto userDto)
         {
+            bool valid = ModelState.IsValid; 
+            if (!valid)
+                return BadRequest("User data is not valid");
+
             bool success = await this.userService.CreateUser(userDto);
             if (!success)
-                return BadRequest();
+                return BadRequest("User cannot be created"); 
 
             return Ok();
         }
@@ -26,9 +30,13 @@ namespace YellowNotes.Api.Controllers
         [HttpPost("authenticate")]
         public async Task<IActionResult> VerifyPassword([FromBody] UserDto userDto)
         {
+            bool valid = ModelState.IsValid;
+            if (!valid)
+                return BadRequest("User data is not valid");
+
             bool success = await this.userService.VerifyPassword(userDto);
             if (!success)
-                return BadRequest();
+                return BadRequest("Verification has failed");
 
             return Ok();
         }
@@ -36,9 +44,13 @@ namespace YellowNotes.Api.Controllers
         [HttpPut]
         public async Task<IActionResult> ChangePassword([FromBody] UserDto userDto)
         {
-            bool success = await this.userService.VerifyPassword(userDto);
+            bool valid = ModelState.IsValid;
+            if (!valid)
+                return BadRequest("User data is not valid");
+
+            bool success = await this.userService.ChangePassword(userDto);
             if (!success)
-                return BadRequest();
+                return BadRequest("Failed to change password");
 
             return Ok();
         }
