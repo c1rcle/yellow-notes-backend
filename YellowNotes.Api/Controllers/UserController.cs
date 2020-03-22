@@ -6,7 +6,7 @@ using YellowNotes.Core.Services;
 namespace YellowNotes.Api.Controllers
 {
     [ApiController]
-    [Route("api/users")]
+    [Route("users")]
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;
