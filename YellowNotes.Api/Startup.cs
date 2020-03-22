@@ -25,7 +25,7 @@ namespace YellowNotes.Api
             services.AddDbContextPool<DatabaseContext>(options => 
                 options.UseMySql(Configuration.GetConnectionString("Development")));
             services.Configure<EmailConfiguration>(Configuration.GetSection("EmailConfiguration"));
-            services.AddTransient<IEmailService, EmailService>();
+            services.AddSingleton<IEmailService, EmailService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
