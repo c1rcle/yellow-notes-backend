@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using YellowNotes.Core;
+using YellowNotes.Core.Repositories;
+using YellowNotes.Core.Services;
 
 namespace YellowNotes.Api
 {
@@ -22,6 +24,9 @@ namespace YellowNotes.Api
             services.AddControllers();
             services.AddDbContextPool<DatabaseContext>(options => 
                 options.UseMySql(Configuration.GetConnectionString("Development")));
+
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IUserService, UserService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
