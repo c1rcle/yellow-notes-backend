@@ -7,7 +7,7 @@ namespace YellowNotes.Core.Utility
 {
     public static class TokenParser
     {
-        public static string ParseFromHeader(IHeaderDictionary httpHeaders)
+        public static string FromHeaders(IHeaderDictionary httpHeaders)
         {
             if (!httpHeaders.ContainsKey("Authorization"))
                 return null;

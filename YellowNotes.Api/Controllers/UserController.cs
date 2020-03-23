@@ -49,7 +49,7 @@ namespace YellowNotes.Api.Controllers
         {
             var httpHeaders = Request.Headers;
 
-            string token = TokenParser.ParseFromHeader(httpHeaders);
+            string token = TokenParser.FromHeaders(httpHeaders);
             if(token == null)
             {
                 return BadRequest("No token");
