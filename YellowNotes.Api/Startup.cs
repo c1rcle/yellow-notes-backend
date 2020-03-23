@@ -14,8 +14,6 @@ using YellowNotes.Core.Services;
 
 namespace YellowNotes.Api
 {
-   
-
     public class Startup
     {
         public Startup(IConfiguration configuration)
