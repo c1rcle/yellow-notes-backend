@@ -20,11 +20,6 @@ namespace YellowNotes.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserDto userDto, CancellationToken cancellationToken = default)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("User data is not valid");
-            }
-
             bool success = await userService.CreateUser(userDto, cancellationToken);
             if (!success)
             {
@@ -39,11 +34,6 @@ namespace YellowNotes.Api.Controllers
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate([FromBody] UserDto userDto, CancellationToken cancellationToken = default)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("User data is not valid");
-            }
-
             bool success = await userService.VerifyPassword(userDto, cancellationToken);
             if (!success)
             {
@@ -77,11 +67,6 @@ namespace YellowNotes.Api.Controllers
         [HttpPut]
         public async Task<IActionResult> ChangePassword([FromBody] UserDto userDto, CancellationToken cancellationToken = default)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("User data is not valid");
-            }
-
             bool success = await userService.ChangePassword(userDto, cancellationToken);
             if (!success)
             {

@@ -7,12 +7,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
 using System.Text;
 using YellowNotes.Core;
 using YellowNotes.Core.Repositories;
 using YellowNotes.Core.Email;
 using YellowNotes.Core.Services;
+using YellowNotes.Api.Filters;
 
 namespace YellowNotes.Api
 {
@@ -29,14 +29,15 @@ namespace YellowNotes.Api
         {
             services.AddControllers();
 
+            services.AddMvcCore(options =>
+            {
+                options.Filters.Add(typeof(ValidateModelStateFilter));
+            })
+            .AddApiExplorer()
+            .AddDataAnnotations();
+
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IUserService, UserService>();
-
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("AuthenticatedUser", policy => policy.RequireClaim(ClaimTypes.Email)
-                    .RequireAuthenticatedUser());
-            });
 
             services.AddAuthentication(x =>
             {
@@ -56,9 +57,9 @@ namespace YellowNotes.Api
                 };
             });
 
-            services.AddDbContextPool<DatabaseContext>(options => 
+            services.AddDbContextPool<DatabaseContext>(options =>
             options.UseMySql(Configuration.GetValue<string>("ConnectionString")));
-            
+
             services.Configure<EmailConfiguration>(Configuration.GetSection("EmailConfiguration"));
             services.AddSingleton<IEmailService, EmailService>();
         }
