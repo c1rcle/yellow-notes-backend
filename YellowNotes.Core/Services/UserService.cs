@@ -47,7 +47,7 @@ namespace YellowNotes.Core.Services
         public string GenerateJWT(UserDto user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(configuration["Jwt:SecretKey"]);
+            var key = Encoding.ASCII.GetBytes(configuration.GetValue<string>("JwtSecret"));
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]

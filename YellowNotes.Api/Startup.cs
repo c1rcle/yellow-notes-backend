@@ -28,9 +28,6 @@ namespace YellowNotes.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-          
-            services.AddDbContextPool<DatabaseContext>(options =>
-                options.UseMySql(Configuration.GetConnectionString("Development")));
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IUserService, UserService>();
@@ -53,7 +50,7 @@ namespace YellowNotes.Api
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["Jwt:SecretKey"])),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetValue<string>("JwtSecret"))),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                 };
