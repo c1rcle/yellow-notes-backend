@@ -1,11 +1,16 @@
 using System.Data;
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using YellowNotes.Core;
+using YellowNotes.Core.Email;
+using YellowNotes.Core.Services;
 
 namespace YellowNotes.Api
 {
@@ -35,6 +40,11 @@ namespace YellowNotes.Api
                 });
             });
             services.AddControllers();
+            services.AddDbContextPool<DatabaseContext>(options => 
+            options.UseMySql(Configuration.GetValue<string>("ConnectionString")));
+            
+            services.Configure<EmailConfiguration>(Configuration.GetSection("EmailConfiguration"));
+            services.AddSingleton<IEmailService, EmailService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
