@@ -9,10 +9,9 @@ namespace YellowNotes.Core.Utility
     {
         public static string FromHeaders(IHeaderDictionary httpHeaders)
         {
-            if (!httpHeaders.ContainsKey("Authorization"))
+            bool success = httpHeaders.TryGetValue("Authorization", out var authorizationString);
+            if (!success)
                 return null;
-
-            httpHeaders.TryGetValue("Authorization", out var authorizationString);
 
             string token = authorizationString.ToString().Split(' ')[1];
             return token;
