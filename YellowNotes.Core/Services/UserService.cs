@@ -71,6 +71,5 @@ namespace YellowNotes.Core.Services
 
             return isUserAuthorized && !tokenExpired;
         }
-
     }
 }
