@@ -10,5 +10,8 @@ namespace YellowNotes.Core.Services
         Task<bool> VerifyPassword(UserDto user);
 
         Task<bool> ChangePassword(UserDto user);
+
+        string GenerateJWT(UserDto user);
+        bool ValidateToken(string token, UserDto user);
     }
 }
