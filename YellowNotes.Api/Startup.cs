@@ -25,8 +25,8 @@ namespace YellowNotes.Api
 
         public void ConfigureServices(IServiceCollection services)
         {    
-            var allowedHosts = Configuration.GetSection("CORS-Settings:AllowedHosts").Get<string[]>();
-            var allowedMethods = Configuration.GetSection("CORS-Settings:AllowedMethods").Get<string[]>();
+            var allowedHosts = Configuration.GetSection("CorsSettings:AllowedHosts").Get<string[]>();
+            var allowedMethods = Configuration.GetSection("CorsSettings:AllowedMethods").Get<string[]>();
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
