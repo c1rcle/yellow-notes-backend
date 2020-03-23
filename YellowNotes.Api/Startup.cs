@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using YellowNotes.Core;
 using YellowNotes.Core.Repositories;
+using YellowNotes.Core.Email;
 using YellowNotes.Core.Services;
 
 namespace YellowNotes.Api
@@ -26,6 +28,7 @@ namespace YellowNotes.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+          
             services.AddDbContextPool<DatabaseContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("Development")));
 
@@ -55,6 +58,12 @@ namespace YellowNotes.Api
                     ValidateAudience = false,
                 };
             });
+
+            services.AddDbContextPool<DatabaseContext>(options => 
+            options.UseMySql(Configuration.GetValue<string>("ConnectionString")));
+            
+            services.Configure<EmailConfiguration>(Configuration.GetSection("EmailConfiguration"));
+            services.AddSingleton<IEmailService, EmailService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
