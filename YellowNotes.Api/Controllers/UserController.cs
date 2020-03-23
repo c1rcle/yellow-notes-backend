@@ -31,7 +31,8 @@ namespace YellowNotes.Api.Controllers
                 return BadRequest("User cannot be created");
             }
 
-            return Ok();
+            string token = userService.GenerateJWT(userDto);
+            return Ok(new { token });
         }
 
         [AllowAnonymous]
@@ -50,7 +51,6 @@ namespace YellowNotes.Api.Controllers
             }
 
             string token = userService.GenerateJWT(userDto);
-
             return Ok(new { token });
         }
 
