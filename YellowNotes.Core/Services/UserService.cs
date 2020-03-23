@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using CryptoHelper;
 using YellowNotes.Core.Dtos;
@@ -13,24 +14,24 @@ namespace YellowNotes.Core.Services
 
         public UserService(IUserRepository repository) => this.repository = repository;
 
-        public async Task<bool> CreateUser(UserDto user)
+        public async Task<bool> CreateUser(UserDto user, CancellationToken cancellationToken)
         {
             return await repository.CreateUser(new User
             {
                 Email = user.Email,
                 RegistrationDate = DateTime.Now,
                 PasswordHash = Crypto.HashPassword(user.Password)
-            });
+            }, cancellationToken);
         }
 
-        public async Task<bool> VerifyPassword(UserDto user)
+        public async Task<bool> VerifyPassword(UserDto user, CancellationToken cancellationToken)
         {
-            return await repository.VerifyPassword(user);
+            return await repository.VerifyPassword(user, cancellationToken);
         }
 
-        public async Task<bool> ChangePassword(UserDto user)
+        public async Task<bool> ChangePassword(UserDto user, CancellationToken cancellationToken)
         {
-            return await repository.ChangePassword(user);
+            return await repository.ChangePassword(user, cancellationToken);
         }
     }
 }
