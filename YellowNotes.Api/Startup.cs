@@ -29,7 +29,7 @@ namespace YellowNotes.Api
             var allowedMethods = Configuration.GetSection("CORS-Settings:AllowedMethods").Get<string[]>();
             services.AddCors(options =>
             {
-            options.AddDefaultPolicy(
+                options.AddDefaultPolicy(
                 builder =>
                 {
                     builder.WithOrigins(allowedHosts)
@@ -51,7 +51,6 @@ namespace YellowNotes.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
