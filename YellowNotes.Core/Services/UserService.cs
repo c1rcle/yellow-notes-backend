@@ -65,7 +65,7 @@ namespace YellowNotes.Core.Services
         public bool ValidateToken(string token, UserDto user)
         {
             var securityToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
-            string decodedEmail = securityToken.Payload["email"] as string;
+            var decodedEmail = securityToken.Payload["email"] as string;
 
             bool isUserAuthorized = decodedEmail == user.Email;
             bool tokenExpired = securityToken.ValidTo < DateTime.UtcNow;
