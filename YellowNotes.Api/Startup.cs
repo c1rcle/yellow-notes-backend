@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -58,7 +57,7 @@ namespace YellowNotes.Api
             });
 
             services.AddDbContextPool<DatabaseContext>(options =>
-            options.UseMySql(Configuration.GetValue<string>("ConnectionString")));
+                options.UseMySql(Configuration.GetValue<string>("ConnectionString")));
 
             services.Configure<EmailConfiguration>(Configuration.GetSection("EmailConfiguration"));
             services.AddSingleton<IEmailService, EmailService>();
