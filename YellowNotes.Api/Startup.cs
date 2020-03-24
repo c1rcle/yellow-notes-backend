@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Data;
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +27,19 @@ namespace YellowNotes.Api
         public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
-        {
+        {    
+            var allowedHosts = Configuration.GetSection("CorsSettings:AllowedHosts").Get<string[]>();
+            var allowedMethods = Configuration.GetSection("CorsSettings:AllowedMethods").Get<string[]>();
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                builder =>
+                {
+                    builder.WithOrigins(allowedHosts)
+                                        .AllowAnyHeader()
+                                        .WithMethods(allowedMethods);
+                });
+            });
             services.AddControllers();
 
             services.AddMvcCore(options =>
@@ -69,7 +83,6 @@ namespace YellowNotes.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();
