@@ -1,3 +1,4 @@
+using System.Data;
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -21,7 +22,19 @@ namespace YellowNotes.Api
         public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
-        {
+        {    
+            var allowedHosts = Configuration.GetSection("CorsSettings:AllowedHosts").Get<string[]>();
+            var allowedMethods = Configuration.GetSection("CorsSettings:AllowedMethods").Get<string[]>();
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                builder =>
+                {
+                    builder.WithOrigins(allowedHosts)
+                                        .AllowAnyHeader()
+                                        .WithMethods(allowedMethods);
+                });
+            });
             services.AddControllers();
             services.AddDbContextPool<DatabaseContext>(options => 
             options.UseMySql(Configuration.GetValue<string>("ConnectionString")));
@@ -36,7 +49,6 @@ namespace YellowNotes.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
