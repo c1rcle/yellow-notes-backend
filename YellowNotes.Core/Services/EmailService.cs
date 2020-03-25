@@ -30,9 +30,13 @@ namespace YellowNotes.Core.Services
 
             using (var client = new SmtpClient())
 	        {
-                client.ServerCertificateValidationCallback = (sender, certificate, certChainType, errors) => true;
-                await client.ConnectAsync(emailConfiguration.SmtpServer, emailConfiguration.SmtpPort, false, cancellationToken);
-                await client.AuthenticateAsync(emailConfiguration.SmtpUsername, emailConfiguration.SmtpPassword, cancellationToken);
+                client.ServerCertificateValidationCallback = 
+                    (sender, certificate, certChainType, errors) => true;
+                await client.ConnectAsync(emailConfiguration.SmtpServer,
+                    emailConfiguration.SmtpPort, false, cancellationToken);
+                await client.AuthenticateAsync(emailConfiguration.SmtpUsername,
+                    emailConfiguration.SmtpPassword, cancellationToken);
+                    
 		        await client.SendAsync(email, cancellationToken);
                 await client.DisconnectAsync(true, cancellationToken);
             }

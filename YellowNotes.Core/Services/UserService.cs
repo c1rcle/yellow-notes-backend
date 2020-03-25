@@ -16,6 +16,7 @@ namespace YellowNotes.Core.Services
     public class UserService : IUserService
     {
         private IUserRepository repository;
+
         private IConfiguration configuration;
 
         public UserService(IUserRepository repository, IConfiguration configuration)
@@ -55,7 +56,8 @@ namespace YellowNotes.Core.Services
                     new Claim(ClaimTypes.Email, user.Email)
                 }),
                 Expires = DateTime.UtcNow.AddHours(configuration.GetValue<int>("TokenDurationHours")),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
@@ -67,8 +69,8 @@ namespace YellowNotes.Core.Services
             var securityToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
             var decodedEmail = securityToken.Payload["email"] as string;
 
-            bool isUserAuthorized = decodedEmail == user.Email;
-            bool tokenExpired = securityToken.ValidTo < DateTime.UtcNow;
+            var isUserAuthorized = decodedEmail == user.Email;
+            var tokenExpired = securityToken.ValidTo < DateTime.UtcNow;
 
             return isUserAuthorized && !tokenExpired;
         }

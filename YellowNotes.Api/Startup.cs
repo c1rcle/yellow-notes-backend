@@ -26,8 +26,11 @@ namespace YellowNotes.Api
 
         public void ConfigureServices(IServiceCollection services)
         {    
-            var allowedHosts = Configuration.GetSection("CorsSettings:AllowedHosts").Get<string[]>();
-            var allowedMethods = Configuration.GetSection("CorsSettings:AllowedMethods").Get<string[]>();
+            var allowedHosts = Configuration.GetSection("CorsSettings:AllowedHosts")
+                .Get<string[]>();
+            var allowedMethods = Configuration.GetSection("CorsSettings:AllowedMethods")
+                .Get<string[]>();
+                
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
@@ -38,8 +41,8 @@ namespace YellowNotes.Api
                                         .WithMethods(allowedMethods);
                 });
             });
-            services.AddControllers();
 
+            services.AddControllers();
             services.AddMvcCore(options =>
             {
                 options.Filters.Add(typeof(ValidateModelStateFilter));
@@ -62,7 +65,8 @@ namespace YellowNotes.Api
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetValue<string>("JwtSecret"))),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
+                        .GetBytes(Configuration.GetValue<string>("JwtSecret"))),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                 };
@@ -81,6 +85,7 @@ namespace YellowNotes.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors();
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();
