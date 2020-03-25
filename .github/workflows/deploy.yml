@@ -1,0 +1,20 @@
+name: Deploy to server
+on:
+  push:
+    branches: master
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Exec remote script
+      uses: appleboy/ssh-action@master
+      env:
+        VAULT: ${{ secrets.VAULT }}
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: ./deploy
