@@ -12,6 +12,7 @@ using YellowNotes.Core.Repositories;
 using YellowNotes.Core.Email;
 using YellowNotes.Core.Services;
 using YellowNotes.Api.Filters;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace YellowNotes.Api
 {
@@ -66,16 +67,16 @@ namespace YellowNotes.Api
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
-                        .GetBytes(Configuration.GetValue<string>("JwtSecret"))),
+                        .GetBytes(Configuration.GetValue<string>("JwtSecretProd"))),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                 };
             });
 
             services.AddDbContextPool<DatabaseContext>(options =>
-                options.UseMySql(Configuration.GetValue<string>("ConnectionString")));
+                options.UseMySql(Configuration.GetValue<string>("ConnectionStringProd")));
 
-            services.Configure<EmailConfiguration>(Configuration.GetSection("EmailConfiguration"));
+            services.Configure<EmailConfiguration>(Configuration.GetSection("EmailConfigurationProd"));
             services.AddSingleton<IEmailService, EmailService>();
         }
 
@@ -85,6 +86,11 @@ namespace YellowNotes.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                                   ForwardedHeaders.XForwardedProto
+            });
             app.UseCors();
             app.UseHttpsRedirection();
             app.UseRouting();
