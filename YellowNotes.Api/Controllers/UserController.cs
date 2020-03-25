@@ -47,26 +47,6 @@ namespace YellowNotes.Api.Controllers
             return Ok(new { token });
         }
 
-        [HttpGet]
-        public IActionResult GetSomeTestContent([FromBody] UserDto userDto)
-        {
-            var httpHeaders = Request.Headers;
-
-            var token = TokenParser.FromHeaders(httpHeaders);
-            if (token == null)
-            {
-                return BadRequest("No token");
-            }
-
-            var valid = userService.ValidateToken(token, userDto);
-            if (!valid)
-            {
-                return Unauthorized("Bad token");
-            }
-
-            return Ok("Authorized access to test function");
-        }
-
         [HttpPut]
         public async Task<IActionResult> ChangePassword([FromBody] UserDto userDto,
             CancellationToken cancellationToken = default)
