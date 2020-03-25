@@ -19,29 +19,31 @@ namespace YellowNotes.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserDto userDto, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Register([FromBody] UserDto userDto,
+            CancellationToken cancellationToken = default)
         {
-            bool success = await userService.CreateUser(userDto, cancellationToken);
+            var success = await userService.CreateUser(userDto, cancellationToken);
             if (!success)
             {
                 return BadRequest("User cannot be created");
             }
 
-            string token = userService.GenerateJWT(userDto);
+            var token = userService.GenerateJWT(userDto);
             return Ok(new { token });
         }
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public async Task<IActionResult> Authenticate([FromBody] UserDto userDto, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Authenticate([FromBody] UserDto userDto,
+            CancellationToken cancellationToken = default)
         {
-            bool success = await userService.VerifyPassword(userDto, cancellationToken);
+            var success = await userService.VerifyPassword(userDto, cancellationToken);
             if (!success)
             {
                 return BadRequest("Verification has failed");
             }
 
-            string token = userService.GenerateJWT(userDto);
+            var token = userService.GenerateJWT(userDto);
             return Ok(new { token });
         }
 
@@ -50,13 +52,13 @@ namespace YellowNotes.Api.Controllers
         {
             var httpHeaders = Request.Headers;
 
-            string token = TokenParser.FromHeaders(httpHeaders);
+            var token = TokenParser.FromHeaders(httpHeaders);
             if (token == null)
             {
                 return BadRequest("No token");
             }
 
-            bool valid = userService.ValidateToken(token, userDto);
+            var valid = userService.ValidateToken(token, userDto);
             if (!valid)
             {
                 return Unauthorized("Bad token");
@@ -66,9 +68,10 @@ namespace YellowNotes.Api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> ChangePassword([FromBody] UserDto userDto, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ChangePassword([FromBody] UserDto userDto,
+            CancellationToken cancellationToken = default)
         {
-            bool success = await userService.ChangePassword(userDto, cancellationToken);
+            var success = await userService.ChangePassword(userDto, cancellationToken);
             if (!success)
             {
                 return BadRequest("Failed to change password");

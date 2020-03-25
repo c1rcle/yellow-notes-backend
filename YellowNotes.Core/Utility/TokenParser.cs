@@ -6,11 +6,11 @@ namespace YellowNotes.Core.Utility
     {
         public static string FromHeaders(IHeaderDictionary httpHeaders)
         {
-            bool success = httpHeaders.TryGetValue("Authorization", out var authorizationString);
+            var success = httpHeaders.TryGetValue("Authorization", out var authorizationString);
             if (!success)
                 return null;
 
-            string token = authorizationString.ToString().Split(' ')[1];
+            var token = authorizationString.ToString().Split(' ')[1];
             return token;
         }
     }
