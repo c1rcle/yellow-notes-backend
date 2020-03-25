@@ -3,12 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YellowNotes.Core.Dtos;
 using YellowNotes.Core.Services;
-using YellowNotes.Core.Utility;
 using System.Threading;
 
 namespace YellowNotes.Api.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("users")]
     public class UserController : ControllerBase
@@ -57,7 +55,7 @@ namespace YellowNotes.Api.Controllers
                 return BadRequest("Failed to change password");
             }
 
-            return Ok();
+            return NoContent();
         }
     }
 }

@@ -13,6 +13,7 @@ using YellowNotes.Core.Email;
 using YellowNotes.Core.Services;
 using YellowNotes.Api.Filters;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace YellowNotes.Api
 {
@@ -26,27 +27,27 @@ namespace YellowNotes.Api
         public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
-        {    
+        {
             var allowedHosts = Configuration.GetSection("CorsSettings:AllowedHosts")
                 .Get<string[]>();
             var allowedMethods = Configuration.GetSection("CorsSettings:AllowedMethods")
                 .Get<string[]>();
-                
+
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
                 builder =>
                 {
                     builder.WithOrigins(allowedHosts)
-                                        .AllowAnyHeader()
-                                        .WithMethods(allowedMethods);
+                        .AllowAnyHeader()
+                        .WithMethods(allowedMethods);
                 });
             });
 
-            services.AddControllers();
             services.AddMvcCore(options =>
             {
                 options.Filters.Add(typeof(ValidateModelStateFilter));
+                options.Filters.Add(typeof(AuthorizeFilter));
             })
             .AddApiExplorer()
             .AddDataAnnotations();
@@ -89,7 +90,7 @@ namespace YellowNotes.Api
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor |
-                                   ForwardedHeaders.XForwardedProto
+                    ForwardedHeaders.XForwardedProto
             });
             app.UseCors();
             app.UseHttpsRedirection();

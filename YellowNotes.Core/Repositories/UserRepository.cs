@@ -18,11 +18,11 @@ namespace YellowNotes.Core.Repositories
             var emailExists = await context.Users
                 .AnyAsync(x => x.Email == user.Email, cancellationToken);
 
-            if (emailExists) 
+            if (emailExists)
             {
                 return false;
             }
-            
+
             context.Users.Add(user);
             return await context.SaveChangesAsync(cancellationToken) > 0;
         }
@@ -32,7 +32,7 @@ namespace YellowNotes.Core.Repositories
             var record = await context.Users
                 .SingleOrDefaultAsync(x => x.Email == user.Email, cancellationToken);
 
-            return record != null && 
+            return record != null &&
                 Crypto.VerifyHashedPassword(record.PasswordHash, user.Password);
         }
 
@@ -41,7 +41,10 @@ namespace YellowNotes.Core.Repositories
             var record = await context.Users
                 .SingleOrDefaultAsync(x => x.Email == user.Email, cancellationToken);
 
-            if (!Crypto.VerifyHashedPassword(record.PasswordHash, user.Password)) return false;
+            if (!Crypto.VerifyHashedPassword(record.PasswordHash, user.Password))
+            {
+                return false;
+            }
 
             record.PasswordHash = Crypto.HashPassword(user.NewPassword);
             context.Users.Update(record);
