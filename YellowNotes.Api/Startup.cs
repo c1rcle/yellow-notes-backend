@@ -44,13 +44,11 @@ namespace YellowNotes.Api
                 });
             });
 
-            services.AddMvcCore(options =>
+            services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(ValidateModelStateFilter));
                 options.Filters.Add(typeof(AuthorizeFilter));
-            })
-            .AddApiExplorer()
-            .AddDataAnnotations();
+            });
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IUserService, UserService>();
