@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using YellowNotes.Core.Dtos;
 using YellowNotes.Core.Services;
 using System.Threading;
+using YellowNotes.Core.Utility;
 
 namespace YellowNotes.Api.Controllers
 {
@@ -13,7 +14,13 @@ namespace YellowNotes.Api.Controllers
     {
         private readonly IUserService userService;
 
-        public UserController(IUserService userService) => this.userService = userService;
+        private readonly IEmailService emailService;
+
+        public UserController(IUserService userService, IEmailService emailService) 
+        {
+            this.userService = userService;
+            this.emailService = emailService;
+        }
 
         [AllowAnonymous]
         [HttpPost("register")]
@@ -25,6 +32,9 @@ namespace YellowNotes.Api.Controllers
             {
                 return BadRequest("User cannot be created");
             }
+
+            await emailService.SendEmail(EmailGenerator
+                .RegistrationMessage(userDto.Email), cancellationToken);
 
             var token = userService.GenerateJWT(userDto);
             return Ok(new { token });
@@ -54,6 +64,9 @@ namespace YellowNotes.Api.Controllers
             {
                 return BadRequest("Failed to change password");
             }
+
+            await emailService.SendEmail(EmailGenerator
+                .PasswordChangeMessage(userDto.Email), cancellationToken);
 
             return NoContent();
         }
