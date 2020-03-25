@@ -47,7 +47,7 @@ namespace YellowNotes.Api
             services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(ValidateModelStateFilter));
-                options.Filters.Add(typeof(AuthorizeFilter));
+                options.Filters.Add(new AuthorizeFilter());
             });
 
             services.AddTransient<IUserRepository, UserRepository>();
