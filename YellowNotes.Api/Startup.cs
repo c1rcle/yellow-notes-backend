@@ -14,6 +14,7 @@ using YellowNotes.Core.Services;
 using YellowNotes.Api.Filters;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using System.Text.Json;
 
 namespace YellowNotes.Api
 {
@@ -75,7 +76,16 @@ namespace YellowNotes.Api
             services.AddDbContextPool<DatabaseContext>(options =>
                 options.UseMySql(Configuration.GetValue<string>("ConnectionStringProd")));
 
-            services.Configure<EmailConfiguration>(Configuration.GetSection("EmailConfigurationProd"));
+            var emailConfig = JsonSerializer.Deserialize<EmailConfiguration>(
+                Configuration.GetValue<string>("EmailConfigProd"));
+
+            services.Configure<EmailConfiguration>(options =>
+            {
+                options.SmtpServer = emailConfig.SmtpServer;
+                options.SmtpPort = emailConfig.SmtpPort;
+                options.SmtpUsername = emailConfig.SmtpUsername;
+                options.SmtpPassword = emailConfig.SmtpPassword;
+            });
             services.AddSingleton<IEmailService, EmailService>();
         }
 
