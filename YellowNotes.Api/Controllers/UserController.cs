@@ -3,19 +3,24 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YellowNotes.Core.Dtos;
 using YellowNotes.Core.Services;
-using YellowNotes.Core.Utility;
 using System.Threading;
+using YellowNotes.Core.Utility;
 
 namespace YellowNotes.Api.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("users")]
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;
 
-        public UserController(IUserService userService) => this.userService = userService;
+        private readonly IEmailService emailService;
+
+        public UserController(IUserService userService, IEmailService emailService) 
+        {
+            this.userService = userService;
+            this.emailService = emailService;
+        }
 
         [AllowAnonymous]
         [HttpPost("register")]
@@ -27,6 +32,9 @@ namespace YellowNotes.Api.Controllers
             {
                 return BadRequest("User cannot be created");
             }
+
+            await emailService.SendEmail(EmailGenerator
+                .RegistrationMessage(userDto.Email), cancellationToken);
 
             var token = userService.GenerateJWT(userDto);
             return Ok(new { token });
@@ -47,26 +55,6 @@ namespace YellowNotes.Api.Controllers
             return Ok(new { token });
         }
 
-        [HttpGet]
-        public IActionResult GetSomeTestContent([FromBody] UserDto userDto)
-        {
-            var httpHeaders = Request.Headers;
-
-            var token = TokenParser.FromHeaders(httpHeaders);
-            if (token == null)
-            {
-                return BadRequest("No token");
-            }
-
-            var valid = userService.ValidateToken(token, userDto);
-            if (!valid)
-            {
-                return Unauthorized("Bad token");
-            }
-
-            return Ok("Authorized access to test function");
-        }
-
         [HttpPut]
         public async Task<IActionResult> ChangePassword([FromBody] UserDto userDto,
             CancellationToken cancellationToken = default)
@@ -77,7 +65,10 @@ namespace YellowNotes.Api.Controllers
                 return BadRequest("Failed to change password");
             }
 
-            return Ok();
+            await emailService.SendEmail(EmailGenerator
+                .PasswordChangeMessage(userDto.Email), cancellationToken);
+
+            return NoContent();
         }
     }
 }

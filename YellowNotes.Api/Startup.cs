@@ -12,43 +12,55 @@ using YellowNotes.Core.Repositories;
 using YellowNotes.Core.Email;
 using YellowNotes.Core.Services;
 using YellowNotes.Api.Filters;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using System.Text.Json;
 
 namespace YellowNotes.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
 
+        public IWebHostEnvironment Environment { get; }
+
         public void ConfigureServices(IServiceCollection services)
-        {    
+        {
+            var keyListName = "DevelopmentKeys";
+            if (Environment.IsProduction())
+            {
+                keyListName = "ProductionKeys";
+            }
+
+            var keyList = Configuration.GetSection(keyListName).Get<string[]>();
+
             var allowedHosts = Configuration.GetSection("CorsSettings:AllowedHosts")
                 .Get<string[]>();
             var allowedMethods = Configuration.GetSection("CorsSettings:AllowedMethods")
                 .Get<string[]>();
-                
+
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
                 builder =>
                 {
                     builder.WithOrigins(allowedHosts)
-                                        .AllowAnyHeader()
-                                        .WithMethods(allowedMethods);
+                        .AllowAnyHeader()
+                        .WithMethods(allowedMethods);
                 });
             });
 
-            services.AddControllers();
-            services.AddMvcCore(options =>
+            services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(ValidateModelStateFilter));
-            })
-            .AddApiExplorer()
-            .AddDataAnnotations();
+                options.Filters.Add(new AuthorizeFilter());
+            });
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IUserService, UserService>();
@@ -66,25 +78,39 @@ namespace YellowNotes.Api
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
-                        .GetBytes(Configuration.GetValue<string>("JwtSecret"))),
+                        .GetBytes(Configuration.GetValue<string>(keyList[0]))),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                 };
             });
 
             services.AddDbContextPool<DatabaseContext>(options =>
-                options.UseMySql(Configuration.GetValue<string>("ConnectionString")));
+                options.UseMySql(Configuration.GetValue<string>(keyList[1])));
 
-            services.Configure<EmailConfiguration>(Configuration.GetSection("EmailConfiguration"));
+            var emailConfig = JsonSerializer.Deserialize<EmailConfiguration>(
+                Configuration.GetValue<string>(keyList[2]));
+
+            services.Configure<EmailConfiguration>(options =>
+            {
+                options.SmtpServer = emailConfig.SmtpServer;
+                options.SmtpPort = emailConfig.SmtpPort;
+                options.SmtpUsername = emailConfig.SmtpUsername;
+                options.SmtpPassword = emailConfig.SmtpPassword;
+            });
             services.AddSingleton<IEmailService, EmailService>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
+            if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                    ForwardedHeaders.XForwardedProto
+            });
             app.UseCors();
             app.UseHttpsRedirection();
             app.UseRouting();
