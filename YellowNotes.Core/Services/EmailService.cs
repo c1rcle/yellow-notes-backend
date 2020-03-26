@@ -4,6 +4,7 @@ using YellowNotes.Core.Email;
 using MimeKit;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
+using MimeKit.Text;
 
 namespace YellowNotes.Core.Services
 {
@@ -22,18 +23,18 @@ namespace YellowNotes.Core.Services
             email.From.Add(new MailboxAddress(emailMessage.FromEmailAddress));
             email.To.Add(new MailboxAddress(emailMessage.ToEmailAddress));
             email.Subject = emailMessage.Subject;
-
-            var body = new BodyBuilder
+            
+            email.Body = new TextPart(TextFormat.Html)
             {
-                HtmlBody = emailMessage.Content
+                Text = emailMessage.Content
             };
-
+            
             using (var client = new SmtpClient())
 	        {
                 client.ServerCertificateValidationCallback = 
                     (sender, certificate, certChainType, errors) => true;
                 await client.ConnectAsync(emailConfiguration.SmtpServer,
-                    emailConfiguration.SmtpPort, false, cancellationToken);
+                    emailConfiguration.SmtpPort, true, cancellationToken);
                 await client.AuthenticateAsync(emailConfiguration.SmtpUsername,
                     emailConfiguration.SmtpPassword, cancellationToken);
                     
