@@ -20,15 +20,26 @@ namespace YellowNotes.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
 
+        public IWebHostEnvironment Environment { get; }
+
         public void ConfigureServices(IServiceCollection services)
         {
+            var keyListName = "DevelopmentKeys";
+            if (Environment.IsProduction())
+            {
+                keyListName = "ProductionKeys";
+            }
+
+            var keyList = Configuration.GetSection(keyListName).Get<string[]>();
+
             var allowedHosts = Configuration.GetSection("CorsSettings:AllowedHosts")
                 .Get<string[]>();
             var allowedMethods = Configuration.GetSection("CorsSettings:AllowedMethods")
@@ -67,17 +78,17 @@ namespace YellowNotes.Api
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
-                        .GetBytes(Configuration.GetValue<string>("JwtSecretProd"))),
+                        .GetBytes(Configuration.GetValue<string>(keyList[0]))),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                 };
             });
 
             services.AddDbContextPool<DatabaseContext>(options =>
-                options.UseMySql(Configuration.GetValue<string>("ConnectionStringProd")));
+                options.UseMySql(Configuration.GetValue<string>(keyList[1])));
 
             var emailConfig = JsonSerializer.Deserialize<EmailConfiguration>(
-                Configuration.GetValue<string>("EmailConfigProd"));
+                Configuration.GetValue<string>(keyList[2]));
 
             services.Configure<EmailConfiguration>(options =>
             {
@@ -89,9 +100,9 @@ namespace YellowNotes.Api
             services.AddSingleton<IEmailService, EmailService>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
+            if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
