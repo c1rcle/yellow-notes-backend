@@ -20,7 +20,7 @@ namespace YellowNotes.Core.Services
         public async Task SendEmail(EmailMessage emailMessage, CancellationToken cancellationToken)
         {
             var email = new MimeMessage();
-            email.From.Add(new MailboxAddress("Yellow Notes", emailMessage.FromEmailAddress));
+            email.From.Add(new MailboxAddress("Yellow Notes", emailConfiguration.SmtpUsername));
             email.To.Add(new MailboxAddress(emailMessage.ToEmailAddress));
             email.Subject = emailMessage.Subject;
 
