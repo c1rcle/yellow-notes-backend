@@ -37,10 +37,11 @@ namespace YellowNotes.Api.Controllers
             try
             {
                 await emailService.SendEmail(EmailGenerator
-                .RegistrationMessage(userDto.Email), cancellationToken);
+                    .RegistrationMessage(userDto.Email), cancellationToken);
             }
-            catch
+            catch (Exception e)
             {
+                Console.WriteLine(e.ToString());
             }
 
             var token = userService.GenerateJWT(userDto);
