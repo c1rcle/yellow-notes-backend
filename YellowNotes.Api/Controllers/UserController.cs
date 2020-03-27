@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,8 +34,14 @@ namespace YellowNotes.Api.Controllers
                 return BadRequest("User cannot be created");
             }
 
-            await emailService.SendEmail(EmailGenerator
+            try
+            {
+                await emailService.SendEmail(EmailGenerator
                 .RegistrationMessage(userDto.Email), cancellationToken);
+            }
+            catch
+            {
+            }
 
             var token = userService.GenerateJWT(userDto);
             return Ok(new { token });
