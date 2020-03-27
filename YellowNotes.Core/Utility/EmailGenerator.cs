@@ -13,7 +13,6 @@ namespace YellowNotes.Core.Utility
         Content = File.ReadAllText("EmailTemplate.html")
       };
 
-
     public static EmailMessage PasswordChangeMessage(string emailAddress) =>
      new EmailMessage()
      {
