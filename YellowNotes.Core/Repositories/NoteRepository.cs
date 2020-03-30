@@ -44,7 +44,7 @@ namespace YellowNotes.Core.Repositories
                 return false;
             }
 
-            record.ModificationDate = note.ModificationDate;
+            record.ModificationDate = DateTime.Now;
             record.Content = note.Content;
             
             context.Notes.Update(record);
