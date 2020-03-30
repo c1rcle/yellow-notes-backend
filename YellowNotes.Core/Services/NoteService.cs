@@ -1,30 +1,55 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using YellowNotes.Core.Dtos;
+using YellowNotes.Core.Models;
+using YellowNotes.Core.Repositories;
 
 namespace YellowNotes.Core.Services
 {
     public class NoteService : INoteService
     {
-        public Task<bool> CreateNote(NoteDto note, CancellationToken cancellationToken)
+        private readonly INoteRepository repository;
+
+        private readonly IMapper mapper;
+
+        public NoteService(INoteRepository repository, IMapper mapper)
         {
-            throw new System.NotImplementedException();
+            this.repository = repository;
+            this.mapper = mapper;
         }
 
-        public Task<IEnumerable<NoteDto>> GetNotes(int count, CancellationToken cancellationToken)
+        public async Task<bool> CreateNote(NoteDto note, string email,
+            CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            return await repository.CreateNote(new Note
+            {
+                UserEmail = email,
+                ModificationDate = DateTime.Now,
+                Variant = note.Variant,
+                IsRemoved = false,
+                Content = note.Content
+            }, cancellationToken);
         }
 
-        public Task<bool> UpdateNote(NoteDto note, CancellationToken cancellationToken)
+        public async Task<IEnumerable<NoteDto>> GetNotes(int count,
+            CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            var notes = await repository.GetNotes(count, cancellationToken);
+            return notes.Select(x => mapper.Map<NoteDto>(x));
         }
 
-        public Task<bool> DeleteNote(int noteId, CancellationToken cancellationToken)
+        public async Task<bool> UpdateNote(NoteDto note, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            return await repository.UpdateNote(note, cancellationToken);
+        }
+
+        public async Task<bool> DeleteNote(int noteId, CancellationToken cancellationToken)
+        {
+            return await repository.DeleteNote(noteId, cancellationToken);
         }
     }
 }
