@@ -2,17 +2,18 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using YellowNotes.Core.Dtos;
+using YellowNotes.Core.Models;
 
-namespace YellowNotes.Core.Services
+namespace YellowNotes.Core.Repositories
 {
-    public class NoteService : INoteService
+    public class NoteRepository : INoteRepository
     {
-        public Task<bool> CreateNote(NoteDto note, CancellationToken cancellationToken)
+        public Task<bool> CreateNote(Note note, CancellationToken cancellationToken)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<IEnumerable<NoteDto>> GetNotes(int count, CancellationToken cancellationToken)
+        public Task<IEnumerable<Note>> GetNotes(int count, CancellationToken cancellationToken)
         {
             throw new System.NotImplementedException();
         }
