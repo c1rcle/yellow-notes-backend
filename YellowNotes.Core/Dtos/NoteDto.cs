@@ -10,6 +10,7 @@ namespace YellowNotes.Core.Dtos
         public DateTime ModificationDate { get; set; }
 
         [Required]
+        [StringLength(4)]
         public string Variant { get; set; }
 
         public string Content { get; set; }

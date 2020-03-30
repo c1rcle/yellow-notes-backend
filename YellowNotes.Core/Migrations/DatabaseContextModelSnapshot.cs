@@ -17,23 +17,65 @@ namespace YellowNotes.Core.Migrations
                 .HasAnnotation("ProductVersion", "3.1.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("YellowNotes.Core.Models.Note", b =>
+                {
+                    b.Property<int>("NoteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<bool>("IsRemoved")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("ModificationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4")
+                        .IsUnicode(false);
+
+                    b.Property<string>("Variant")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .IsUnicode(false);
+
+                    b.HasKey("NoteId");
+
+                    b.HasIndex("UserEmail");
+
+                    b.ToTable("Notes");
+                });
+
             modelBuilder.Entity("YellowNotes.Core.Models.User", b =>
                 {
                     b.Property<string>("Email")
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4")
                         .IsUnicode(false);
 
-                    b.Property<DateTime>("RegistrationDate")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .IsUnicode(false);
 
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("datetime(6)");
+
                     b.HasKey("Email");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("YellowNotes.Core.Models.Note", b =>
+                {
+                    b.HasOne("YellowNotes.Core.Models.User", "User")
+                        .WithMany("Notes")
+                        .HasForeignKey("UserEmail")
+                        .HasConstraintName("FK_User")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
