@@ -7,7 +7,7 @@ namespace YellowNotes.Core.Dtos
     {
         public Mapping()
         {
-            CreateMap<Note, NoteDto>();
+            CreateMap<Note, NoteDto>().ReverseMap();
         }
     }
 }

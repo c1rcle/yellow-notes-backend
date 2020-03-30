@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -25,20 +24,16 @@ namespace YellowNotes.Core.Services
         public async Task<bool> CreateNote(NoteDto note, string email,
             CancellationToken cancellationToken)
         {
-            return await repository.CreateNote(new Note
-            {
-                UserEmail = email,
-                ModificationDate = DateTime.Now,
-                Variant = note.Variant,
-                IsRemoved = false,
-                Content = note.Content
-            }, cancellationToken);
+            var mappedNote = mapper.Map<Note>(note);
+            mappedNote.UserEmail = email;
+
+            return await repository.CreateNote(mappedNote, cancellationToken);
         }
 
-        public async Task<IEnumerable<NoteDto>> GetNotes(int count,
+        public async Task<IEnumerable<NoteDto>> GetNotes(int count, string email,
             CancellationToken cancellationToken)
         {
-            var notes = await repository.GetNotes(count, cancellationToken);
+            var notes = await repository.GetNotes(count, email, cancellationToken);
             return notes.Select(x => mapper.Map<NoteDto>(x));
         }
 
