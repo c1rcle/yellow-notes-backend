@@ -68,6 +68,8 @@ namespace YellowNotes.Api
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<INoteRepository, NoteRepository>();
+            services.AddTransient<INoteService, NoteService>();
 
             services.AddAuthentication(x =>
             {
