@@ -44,7 +44,7 @@ namespace YellowNotes.Api.Controllers
                 Console.WriteLine(e.ToString());
             }
 
-            var token = userService.GenerateJWT(userDto);
+            var token = userService.GenerateJwt(userDto);
             return Ok(new { token });
         }
 
@@ -59,7 +59,7 @@ namespace YellowNotes.Api.Controllers
                 return BadRequest("Verification has failed");
             }
 
-            var token = userService.GenerateJWT(userDto);
+            var token = userService.GenerateJwt(userDto);
             return Ok(new { token });
         }
 
