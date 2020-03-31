@@ -47,7 +47,6 @@ namespace YellowNotes.Core.Repositories
             }
 
             record.PasswordHash = Crypto.HashPassword(user.NewPassword);
-            context.Users.Update(record);
             return await context.SaveChangesAsync(cancellationToken) > 0;
         }
     }

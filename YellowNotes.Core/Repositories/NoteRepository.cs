@@ -46,9 +46,9 @@ namespace YellowNotes.Core.Repositories
             }
 
             record.ModificationDate = DateTime.Now;
-            record.Content = note.Content;
+            record.Title = note.Title ?? record.Title;
+            record.Content = note.Content ?? record.Content;
             
-            context.Notes.Update(record);
             return await context.SaveChangesAsync(cancellationToken) > 0;
         }
 
@@ -63,8 +63,6 @@ namespace YellowNotes.Core.Repositories
             }
 
             record.IsRemoved = true;
-
-            context.Notes.Update(record);
             return await context.SaveChangesAsync(cancellationToken) > 0;
         }
     }
