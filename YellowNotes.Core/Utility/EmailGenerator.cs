@@ -3,7 +3,7 @@ using YellowNotes.Core.Email;
 
 namespace YellowNotes.Core.Utility
 {
-    public class EmailGenerator
+    public static class EmailGenerator
     {
         public static EmailMessage RegistrationMessage(string emailAddress) =>
             new EmailMessage()
