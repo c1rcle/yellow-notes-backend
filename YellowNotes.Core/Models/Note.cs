@@ -16,10 +16,14 @@ namespace YellowNotes.Core.Models
         public DateTime ModificationDate { get; set; }
 
         [Required]
+        [StringLength(4)]
         public string Variant { get; set; }
 
         [Required]
         public bool IsRemoved { get; set; }
+
+        [Required]
+        public string Title { get; set; }
 
         public string Content { get; set; }
 

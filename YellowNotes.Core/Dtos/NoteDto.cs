@@ -13,6 +13,8 @@ namespace YellowNotes.Core.Dtos
         [StringLength(4)]
         public string Variant { get; set; }
 
+        public string Title { get; set; }
+
         public string Content { get; set; }
     }
 }
