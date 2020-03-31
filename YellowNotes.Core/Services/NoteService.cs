@@ -30,10 +30,10 @@ namespace YellowNotes.Core.Services
             return await repository.CreateNote(mappedNote, cancellationToken);
         }
 
-        public async Task<IEnumerable<NoteDto>> GetNotes(int count, string email,
+        public async Task<IEnumerable<NoteDto>> GetNotes(int takeCount, int skipCount, string email,
             CancellationToken cancellationToken)
         {
-            var notes = await repository.GetNotes(count, email, cancellationToken);
+            var notes = await repository.GetNotes(takeCount, skipCount, email, cancellationToken);
             return notes.Select(x => mapper.Map<NoteDto>(x));
         }
 

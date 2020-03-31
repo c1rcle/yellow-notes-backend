@@ -10,7 +10,7 @@ namespace YellowNotes.Core.Repositories
     {
         Task<bool> CreateNote(Note note, CancellationToken cancellationToken);
 
-        Task<IEnumerable<Note>> GetNotes(int count, string email,
+        Task<IEnumerable<Note>> GetNotes(int takeCount, int skipCount, string email,
             CancellationToken cancellationToken);
 
         Task<bool> UpdateNote(NoteDto note, CancellationToken cancellationToken);

@@ -24,12 +24,13 @@ namespace YellowNotes.Core.Repositories
             return await context.SaveChangesAsync(cancellationToken) > 0;
         }
 
-        public async Task<IEnumerable<Note>> GetNotes(int count, string email,
+        public async Task<IEnumerable<Note>> GetNotes(int takeCount, int skipCount, string email,
             CancellationToken cancellationToken)
         {
             return await context.Notes.Where(x => x.UserEmail == email && x.IsRemoved == false)
                 .OrderByDescending(x => x.ModificationDate)
-                .Take(count)
+                .Skip(skipCount)
+                .Take(takeCount)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
         }
