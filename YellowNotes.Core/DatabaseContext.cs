@@ -12,12 +12,26 @@ namespace YellowNotes.Core
 
         public virtual DbSet<User> Users { get; set; }
 
+        public virtual DbSet<Note> Notes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(e => e.Email).IsUnicode(false);
                 entity.Property(e => e.PasswordHash).IsUnicode(false); 
+            });
+
+            modelBuilder.Entity<Note>(entity => 
+            {
+                entity.Property(e => e.UserEmail).IsUnicode(false);
+                entity.Property(e => e.Variant).IsUnicode(false);
+
+                entity.HasOne(e => e.User)
+                    .WithMany(e => e.Notes)
+                    .HasForeignKey(e => e.UserEmail)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_User");
             });
         }
     }

@@ -15,6 +15,8 @@ using YellowNotes.Api.Filters;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using System.Text.Json;
+using AutoMapper;
+using YellowNotes.Core.Dtos;
 
 namespace YellowNotes.Api
 {
@@ -45,6 +47,8 @@ namespace YellowNotes.Api
             var allowedMethods = Configuration.GetSection("CorsSettings:AllowedMethods")
                 .Get<string[]>();
 
+            services.AddAutoMapper(typeof(Mapping));
+
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
@@ -64,6 +68,8 @@ namespace YellowNotes.Api
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<INoteRepository, NoteRepository>();
+            services.AddTransient<INoteService, NoteService>();
 
             services.AddAuthentication(x =>
             {

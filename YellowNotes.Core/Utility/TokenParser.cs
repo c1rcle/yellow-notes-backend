@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Http;
+using YellowNotes.Core.Dtos;
 
 namespace YellowNotes.Core.Utility
 {
@@ -12,6 +15,17 @@ namespace YellowNotes.Core.Utility
 
             var token = authorizationString.ToString().Split(' ')[1];
             return token;
+        }
+
+        public static bool ValidateToken(string token, UserDto user)
+        {
+            var securityToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
+            var decodedEmail = securityToken.Payload["email"] as string;
+
+            var isUserAuthorized = decodedEmail == user.Email;
+            var tokenExpired = securityToken.ValidTo < DateTime.UtcNow;
+
+            return isUserAuthorized && !tokenExpired;
         }
     }
 }

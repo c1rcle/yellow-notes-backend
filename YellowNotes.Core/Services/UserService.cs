@@ -45,7 +45,7 @@ namespace YellowNotes.Core.Services
             return await repository.ChangePassword(user, cancellationToken);
         }
 
-        public string GenerateJWT(UserDto user)
+        public string GenerateJwt(UserDto user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(configuration.GetValue<string>("JwtSecret"));
@@ -62,17 +62,6 @@ namespace YellowNotes.Core.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
-        }
-
-        public bool ValidateToken(string token, UserDto user)
-        {
-            var securityToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
-            var decodedEmail = securityToken.Payload["email"] as string;
-
-            var isUserAuthorized = decodedEmail == user.Email;
-            var tokenExpired = securityToken.ValidTo < DateTime.UtcNow;
-
-            return isUserAuthorized && !tokenExpired;
         }
     }
 }
