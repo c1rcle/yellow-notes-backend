@@ -7,27 +7,6 @@ namespace YellowNotes.Core.Utility
 {
     public static class TokenUtility
     {
-        private static string ParseFromHeaders(IHeaderDictionary httpHeaders)
-        {
-            var success = httpHeaders.TryGetValue("Authorization", out var authorizationString);
-            if (!success)
-                return null;
-
-            var token = authorizationString.ToString().Split(' ')[1];
-            return token;
-        }
-
-        private static bool Validate(string token, UserDto user)
-        {
-            var securityToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
-            var decodedEmail = securityToken.Payload["email"] as string;
-
-            var isUserAuthorized = decodedEmail == user.Email;
-            var tokenExpired = securityToken.ValidTo < DateTime.UtcNow;
-
-            return isUserAuthorized && !tokenExpired;
-        }
-
         public static string Authorize(UserDto userDto, IHeaderDictionary httpHeaders)
         {
             string error = null;
@@ -43,6 +22,38 @@ namespace YellowNotes.Core.Utility
                 error = "Bad token";
             }
             return error;
+        }
+
+        public static string DecodeEmail(UserDto userDto, IHeaderDictionary httpHeaders)
+        {
+            var token = ParseFromHeaders(httpHeaders);
+
+            var securityToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
+            var decodedEmail = securityToken.Payload["email"] as string;
+
+            return decodedEmail;
+        }
+
+        private static string ParseFromHeaders(IHeaderDictionary httpHeaders)
+        {
+            var success = httpHeaders.TryGetValue("Authorization", out var authorizationString);
+            if (!success)
+                return null;
+
+            var token = authorizationString.ToString().Split(' ')[1];
+            return token;
+        }
+
+
+        private static bool Validate(string token, UserDto user)
+        {
+            var securityToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
+            var decodedEmail = securityToken.Payload["email"] as string;
+
+            var isUserAuthorized = decodedEmail == user.Email;
+            var tokenExpired = securityToken.ValidTo < DateTime.UtcNow;
+
+            return isUserAuthorized && !tokenExpired;
         }
     }
 }
