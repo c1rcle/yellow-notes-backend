@@ -67,6 +67,13 @@ namespace YellowNotes.Api.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] UserDto userDto,
             CancellationToken cancellationToken = default)
         {
+            var httpHeaders = Request.Headers;
+            var errorMessage = TokenUtility.Authorize(userDto, httpHeaders);
+            if (errorMessage != null)
+            {
+                return Unauthorized(errorMessage);
+            }
+
             var success = await userService.ChangePassword(userDto, cancellationToken);
             if (!success)
             {
@@ -76,7 +83,7 @@ namespace YellowNotes.Api.Controllers
             await emailService.SendEmail(EmailGenerator
                 .PasswordChangeMessage(userDto.Email), cancellationToken);
 
-            return NoContent();
+            return Ok();
         }
     }
 }
