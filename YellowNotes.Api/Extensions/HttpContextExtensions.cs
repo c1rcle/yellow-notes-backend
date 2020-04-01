@@ -4,7 +4,7 @@ using System.Security.Claims;
 
 namespace YellowNotes.Core.Utility
 {
-    public static class ExtensionMethods
+    public static class HttpContextExtensions
     {
         public static string GetEmailFromClaims(this HttpContext httpContext)
         {

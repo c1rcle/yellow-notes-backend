@@ -17,7 +17,8 @@ namespace YellowNotes.Api.Controllers
         public NoteController(INoteService noteService) => this.noteService = noteService;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<NoteDto>>> GetNotes([FromQuery] int takeCount = 20, [FromQuery] int skipCount = 0,
+        public async Task<ActionResult<IEnumerable<NoteDto>>> GetNotes(
+            [FromQuery] int takeCount = 20, [FromQuery] int skipCount = 0,
             CancellationToken cancellationToken = default)
         {
             var userEmail = HttpContext.GetEmailFromClaims();
