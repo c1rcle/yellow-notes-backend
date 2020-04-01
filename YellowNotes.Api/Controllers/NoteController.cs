@@ -85,8 +85,8 @@ namespace YellowNotes.Api.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteNote([FromRoute] int id,
+        [HttpDelete("{noteId}")]
+        public async Task<IActionResult> DeleteNote(int noteId,
             CancellationToken cancellationToken = default)
         {
             var userEmail = HttpContext.GetEmailFromClaims();
@@ -101,7 +101,7 @@ namespace YellowNotes.Api.Controllers
                 return Unauthorized(errorMessage);
             }
 
-            var success = await noteService.DeleteNote(id, cancellationToken);
+            var success = await noteService.DeleteNote(noteId, cancellationToken);
             if (!success)
             {
                 return BadRequest("Failed to delete note");
