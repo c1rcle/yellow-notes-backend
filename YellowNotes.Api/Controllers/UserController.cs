@@ -17,7 +17,7 @@ namespace YellowNotes.Api.Controllers
 
         private readonly IEmailService emailService;
 
-        public UserController(IUserService userService, IEmailService emailService) 
+        public UserController(IUserService userService, IEmailService emailService)
         {
             this.userService = userService;
             this.emailService = emailService;
@@ -67,8 +67,7 @@ namespace YellowNotes.Api.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] UserDto userDto,
             CancellationToken cancellationToken = default)
         {
-            var httpHeaders = Request.Headers;
-            var errorMessage = TokenUtility.Authorize(userDto, httpHeaders);
+            var errorMessage = TokenUtility.Authorize(userDto.Email, Request.Headers);
             if (errorMessage != null)
             {
                 return Unauthorized(errorMessage);
@@ -83,7 +82,7 @@ namespace YellowNotes.Api.Controllers
             await emailService.SendEmail(EmailGenerator
                 .PasswordChangeMessage(userDto.Email), cancellationToken);
 
-            return Ok();
+            return NoContent();
         }
     }
 }

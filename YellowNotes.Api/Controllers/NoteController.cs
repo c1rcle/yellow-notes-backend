@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using YellowNotes.Core.Dtos;
 using YellowNotes.Core.Services;
@@ -16,54 +14,63 @@ namespace YellowNotes.Api.Controllers
     {
         private readonly INoteService noteService;
 
-
-        public NoteController(INoteService noteService)
-        {
-            this.noteService = noteService;
-        }
+        public NoteController(INoteService noteService) => this.noteService = noteService;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<NoteDto>>> GetNotes([FromBody] UserDto userDto, [FromQuery] int takeCount, [FromQuery] int skipCount,
+        public async Task<ActionResult<IEnumerable<NoteDto>>> GetNotes([FromQuery] int takeCount = 20, [FromQuery] int skipCount = 0,
             CancellationToken cancellationToken = default)
         {
-            var httpHeaders = Request.Headers;
-            var errorMessage = TokenUtility.Authorize(userDto, httpHeaders);
+            var userEmail = HttpContext.GetEmailFromClaims();
+            if (userEmail == null)
+            {
+                return BadRequest("Error: HttpContext.User.EmailClaim is null");
+            }
+
+            var errorMessage = TokenUtility.Authorize(userEmail, Request.Headers);
             if (errorMessage != null)
             {
                 return Unauthorized(errorMessage);
             }
-
-            var userEmail = TokenUtility.DecodeEmail(userDto, httpHeaders);
             var notes = await noteService.GetNotes(takeCount, skipCount, userEmail, cancellationToken);
             return Ok(notes);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateNote([FromBody] UserDto userDto, [FromBody] NoteDto noteDto,
+        public async Task<IActionResult> CreateNote([FromBody] NoteDto noteDto,
             CancellationToken cancellationToken = default)
         {
-            var httpHeaders = Request.Headers;
-            var errorMessage = TokenUtility.Authorize(userDto, httpHeaders);
+            var userEmail = HttpContext.GetEmailFromClaims();
+            if (userEmail == null)
+            {
+                return BadRequest("Error: HttpContext.User.EmailClaim is null");
+            }
+
+            var errorMessage = TokenUtility.Authorize(userEmail, Request.Headers);
             if (errorMessage != null)
             {
                 return Unauthorized(errorMessage);
             }
 
-            var userEmail = TokenUtility.DecodeEmail(userDto, httpHeaders);
             var success = await noteService.CreateNote(noteDto, userEmail, cancellationToken);
             if (!success)
             {
                 return BadRequest("Failed to create note");
             }
-            return Ok();
+
+            return NoContent();
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateNote([FromBody] UserDto userDto, [FromBody] NoteDto noteDto,
+        public async Task<IActionResult> UpdateNote([FromBody] NoteDto noteDto,
             CancellationToken cancellationToken = default)
         {
-            var httpHeaders = Request.Headers;
-            var errorMessage = TokenUtility.Authorize(userDto, httpHeaders);
+            var userEmail = HttpContext.GetEmailFromClaims();
+            if (userEmail == null)
+            {
+                return BadRequest("Error: HttpContext.User.EmailClaim is null");
+            }
+
+            var errorMessage = TokenUtility.Authorize(userEmail, Request.Headers);
             if (errorMessage != null)
             {
                 return Unauthorized(errorMessage);
@@ -74,26 +81,33 @@ namespace YellowNotes.Api.Controllers
             {
                 return BadRequest("Failed to update note");
             }
-            return Ok();
+
+            return NoContent();
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteNote([FromBody] UserDto userDto, [FromQuery] int noteId,
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteNote([FromRoute] int id,
             CancellationToken cancellationToken = default)
         {
-            var httpHeaders = Request.Headers;
-            var errorMessage = TokenUtility.Authorize(userDto, httpHeaders);
+            var userEmail = HttpContext.GetEmailFromClaims();
+            if (userEmail == null)
+            {
+                return BadRequest("Error: HttpContext.User.EmailClaim is null");
+            }
+
+            var errorMessage = TokenUtility.Authorize(userEmail, Request.Headers);
             if (errorMessage != null)
             {
                 return Unauthorized(errorMessage);
             }
 
-            var success = await noteService.DeleteNote(noteId, cancellationToken);
+            var success = await noteService.DeleteNote(id, cancellationToken);
             if (!success)
             {
                 return BadRequest("Failed to delete note");
             }
-            return Ok();
+
+            return NoContent();
         }
     }
 }

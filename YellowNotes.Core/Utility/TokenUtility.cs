@@ -7,7 +7,7 @@ namespace YellowNotes.Core.Utility
 {
     public static class TokenUtility
     {
-        public static string Authorize(UserDto userDto, IHeaderDictionary httpHeaders)
+        public static string Authorize(string userEmail, IHeaderDictionary httpHeaders)
         {
             string error = null;
             string token = ParseFromHeaders(httpHeaders);
@@ -16,22 +16,12 @@ namespace YellowNotes.Core.Utility
                 error = "No token";
             }
 
-            bool valid = Validate(token, userDto);
+            bool valid = Validate(token, userEmail);
             if (!valid)
             {
                 error = "Bad token";
             }
             return error;
-        }
-
-        public static string DecodeEmail(UserDto userDto, IHeaderDictionary httpHeaders)
-        {
-            var token = ParseFromHeaders(httpHeaders);
-
-            var securityToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
-            var decodedEmail = securityToken.Payload["email"] as string;
-
-            return decodedEmail;
         }
 
         private static string ParseFromHeaders(IHeaderDictionary httpHeaders)
@@ -44,13 +34,12 @@ namespace YellowNotes.Core.Utility
             return token;
         }
 
-
-        private static bool Validate(string token, UserDto user)
+        private static bool Validate(string token, string userEmail)
         {
             var securityToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
             var decodedEmail = securityToken.Payload["email"] as string;
 
-            var isUserAuthorized = decodedEmail == user.Email;
+            var isUserAuthorized = decodedEmail == userEmail;
             var tokenExpired = securityToken.ValidTo < DateTime.UtcNow;
 
             return isUserAuthorized && !tokenExpired;
