@@ -6,6 +6,7 @@ using YellowNotes.Core.Dtos;
 using YellowNotes.Core.Services;
 using System.Threading;
 using YellowNotes.Core.Utility;
+using Microsoft.AspNetCore.Http;
 
 namespace YellowNotes.Api.Controllers
 {
@@ -25,6 +26,8 @@ namespace YellowNotes.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> Register([FromBody] UserDto userDto,
             CancellationToken cancellationToken = default)
         {
@@ -50,6 +53,8 @@ namespace YellowNotes.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Authenticate([FromBody] UserDto userDto,
             CancellationToken cancellationToken = default)
         {
@@ -64,6 +69,8 @@ namespace YellowNotes.Api.Controllers
         }
 
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> ChangePassword([FromBody] UserDto userDto,
             CancellationToken cancellationToken = default)
         {

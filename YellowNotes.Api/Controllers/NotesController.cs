@@ -5,6 +5,7 @@ using YellowNotes.Core.Services;
 using System.Threading;
 using System.Collections.Generic;
 using YellowNotes.Api.Extensions;
+using Microsoft.AspNetCore.Http;
 
 namespace YellowNotes.Api.Controllers
 {
@@ -17,6 +18,8 @@ namespace YellowNotes.Api.Controllers
         public NotesController(INoteService noteService) => this.noteService = noteService;
 
         [HttpGet("{noteId}")]
+        [ProducesResponseType(typeof(NoteDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<NoteDto>> GetNote(int noteId,
             CancellationToken cancellationToken = default)
         {
@@ -29,6 +32,7 @@ namespace YellowNotes.Api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<NoteDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<NoteDto>>> GetNotes(
             [FromQuery] int takeCount = 20, [FromQuery] int skipCount = 0,
             CancellationToken cancellationToken = default)
@@ -39,6 +43,8 @@ namespace YellowNotes.Api.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> CreateNote([FromBody] NoteDto noteDto,
             CancellationToken cancellationToken = default)
         {
@@ -49,10 +55,12 @@ namespace YellowNotes.Api.Controllers
             {
                 return UnprocessableEntity("Failed to create note");
             }
-            return CreatedAtAction(nameof(GetNote), new { noteId = noteId}, noteDto);
+            return CreatedAtAction(nameof(GetNote), new { noteId = noteId }, noteDto);
         }
 
         [HttpPut("{noteId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> UpdateNote(int noteId, [FromBody] NoteDto noteDto,
             CancellationToken cancellationToken = default)
         {
@@ -67,6 +75,8 @@ namespace YellowNotes.Api.Controllers
         }
 
         [HttpDelete("{noteId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteNote(int noteId,
             CancellationToken cancellationToken = default)
         {
