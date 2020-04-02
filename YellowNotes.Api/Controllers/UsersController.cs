@@ -10,14 +10,14 @@ using YellowNotes.Core.Utility;
 namespace YellowNotes.Api.Controllers
 {
     [ApiController]
-    [Route("users")]
-    public class UserController : ControllerBase
+    [Route("/[controller]")]
+    public class UsersController : ControllerBase
     {
         private readonly IUserService userService;
 
         private readonly IEmailService emailService;
 
-        public UserController(IUserService userService, IEmailService emailService)
+        public UsersController(IUserService userService, IEmailService emailService)
         {
             this.userService = userService;
             this.emailService = emailService;
@@ -31,7 +31,7 @@ namespace YellowNotes.Api.Controllers
             var success = await userService.CreateUser(userDto, cancellationToken);
             if (!success)
             {
-                return BadRequest("User cannot be created");
+                return UnprocessableEntity("User cannot be created");
             }
 
             try
@@ -56,7 +56,7 @@ namespace YellowNotes.Api.Controllers
             var success = await userService.VerifyPassword(userDto, cancellationToken);
             if (!success)
             {
-                return BadRequest("Verification has failed");
+                return Unauthorized("Verification has failed");
             }
 
             var token = userService.GenerateJwt(userDto);
@@ -70,7 +70,7 @@ namespace YellowNotes.Api.Controllers
             var success = await userService.ChangePassword(userDto, cancellationToken);
             if (!success)
             {
-                return BadRequest("Failed to change password");
+                return UnprocessableEntity("Failed to change password");
             }
 
             await emailService.SendEmail(EmailGenerator

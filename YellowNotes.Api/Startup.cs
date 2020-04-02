@@ -64,7 +64,6 @@ namespace YellowNotes.Api
             {
                 options.Filters.Add(typeof(ValidateModelStateFilter));
                 options.Filters.Add(typeof(ValidateTokenFilter)); 
-                options.Filters.Add(typeof(ValidateHttpContextClaimsFilter));
                 options.Filters.Add(new AuthorizeFilter());
             });
 

@@ -1,20 +1,17 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
-using YellowNotes.Core.Dtos;
 
 namespace YellowNotes.Core.Utility
 {
-    public static class TokenUtility
+    public class TokenUtility
     {
-        public static string Validate(string userEmail, IHeaderDictionary httpHeaders)
+        public static bool Validate(string userEmail, IHeaderDictionary httpHeaders)
         {
-            string error = null;
-
-            string token = ParseFromHeaders(httpHeaders);
+            var token = ParseFromHeaders(httpHeaders);
             if (token == null)
             {
-                return "No token";
+                return false;
             }
 
             var securityToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
@@ -23,19 +20,16 @@ namespace YellowNotes.Core.Utility
             var isUserAuthorized = decodedEmail == userEmail;
             var tokenExpired = securityToken.ValidTo < DateTime.UtcNow;
 
-            var validToken = isUserAuthorized && !tokenExpired;
-            if (!validToken)
-            {
-                error = "Bad token";
-            }
-            return error;
+            return isUserAuthorized && !tokenExpired;
         }
 
         private static string ParseFromHeaders(IHeaderDictionary httpHeaders)
         {
             var success = httpHeaders.TryGetValue("Authorization", out var authorizationString);
             if (!success)
+            {
                 return null;
+            }
 
             var token = authorizationString.ToString().Split(' ')[1];
             return token;

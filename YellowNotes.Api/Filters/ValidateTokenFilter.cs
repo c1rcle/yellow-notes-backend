@@ -11,14 +11,22 @@ namespace YellowNotes.Api.Filters
         {
             var userEmail = context.HttpContext.GetEmailFromClaims();
 
-            var controller = context.Controller as ControllerBase;
-            var errorMessage = TokenUtility.Validate(userEmail, controller.Request.Headers);
-            if (errorMessage == null)
+            if (userEmail == null)
             {
+                context.Result = new UnauthorizedObjectResult(
+                    "Error: HttpContext.User.EmailClaim is null");
                 return;
             }
 
-            context.Result = new UnauthorizedObjectResult(errorMessage);
+            var isValidated = TokenUtility.Validate(userEmail,
+                context.HttpContext.Request.Headers);
+                
+            if (!isValidated)
+            {
+                context.Result = new UnauthorizedObjectResult(
+                    "Error: Token is not valid!");
+                return;
+            }
         }
     }
 }

@@ -3,19 +3,18 @@ using Microsoft.AspNetCore.Mvc;
 using YellowNotes.Core.Dtos;
 using YellowNotes.Core.Services;
 using System.Threading;
-using YellowNotes.Core.Utility;
 using System.Collections.Generic;
 using YellowNotes.Api.Extensions;
 
 namespace YellowNotes.Api.Controllers
 {
     [ApiController]
-    [Route("notes")]
-    public class NoteController : ControllerBase
+    [Route("/[controller]")]
+    public class NotesController : ControllerBase
     {
         private readonly INoteService noteService;
 
-        public NoteController(INoteService noteService) => this.noteService = noteService;
+        public NotesController(INoteService noteService) => this.noteService = noteService;
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<NoteDto>>> GetNotes(
@@ -32,23 +31,24 @@ namespace YellowNotes.Api.Controllers
             CancellationToken cancellationToken = default)
         {
             var userEmail = HttpContext.GetEmailFromClaims();
-            
+
             var success = await noteService.CreateNote(noteDto, userEmail, cancellationToken);
             if (!success)
             {
-                return BadRequest("Failed to create note");
+                return UnprocessableEntity("Failed to create note");
             }
             return NoContent();
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateNote([FromBody] NoteDto noteDto,
+        [HttpPut("{noteId}")]
+        public async Task<IActionResult> UpdateNote(int noteId, [FromBody] NoteDto noteDto,
             CancellationToken cancellationToken = default)
         {
+            noteDto.NoteId = noteId;
             var success = await noteService.UpdateNote(noteDto, cancellationToken);
             if (!success)
             {
-                return BadRequest("Failed to update note");
+                return UnprocessableEntity("Failed to update note");
             }
             return NoContent();
         }
@@ -60,7 +60,7 @@ namespace YellowNotes.Api.Controllers
             var success = await noteService.DeleteNote(noteId, cancellationToken);
             if (!success)
             {
-                return BadRequest("Failed to delete note");
+                return NotFound();
             }
             return NoContent();
         }
