@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using YellowNotes.Api.Extensions;
 using YellowNotes.Core.Utility;
@@ -9,6 +11,14 @@ namespace YellowNotes.Api.Filters
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
+            var isAnonymousAllowed = context.ActionDescriptor.EndpointMetadata
+                .Any(x => x.GetType() == typeof(AllowAnonymousAttribute));
+
+            if (isAnonymousAllowed)
+            {
+                return;
+            }
+
             var userEmail = context.HttpContext.GetEmailFromClaims();
 
             if (userEmail == null)
@@ -20,7 +30,7 @@ namespace YellowNotes.Api.Filters
 
             var isValidated = TokenUtility.Validate(userEmail,
                 context.HttpContext.Request.Headers);
-                
+
             if (!isValidated)
             {
                 context.Result = new UnauthorizedObjectResult(
