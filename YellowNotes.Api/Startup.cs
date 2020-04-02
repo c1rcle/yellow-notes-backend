@@ -63,6 +63,7 @@ namespace YellowNotes.Api
             services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(ValidateModelStateFilter));
+                options.Filters.Add(typeof(ValidateTokenFilter)); 
                 options.Filters.Add(new AuthorizeFilter());
             });
 

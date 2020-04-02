@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,9 +8,11 @@ namespace YellowNotes.Core.Services
 {
     public interface INoteService
     {
-        Task<bool> CreateNote(NoteDto note, string email, CancellationToken cancellationToken);
+        Task<NoteDto> CreateNote(NoteDto note, string email, CancellationToken cancellationToken);
 
-        Task<IEnumerable<NoteDto>> GetNotes(int takeCount, int skipCount, string email,
+        Task<NoteDto> GetNote(int noteId, CancellationToken cancellationToken);
+
+        Task<Tuple<int, IEnumerable<NoteDto>>> GetNotes(int takeCount, int skipCount, string email,
             CancellationToken cancellationToken);
 
         Task<bool> UpdateNote(NoteDto note, CancellationToken cancellationToken);
