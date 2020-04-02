@@ -6,7 +6,6 @@ using System.Threading;
 using System.Collections.Generic;
 using YellowNotes.Api.Extensions;
 using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations;
 
 namespace YellowNotes.Api.Controllers
 {
