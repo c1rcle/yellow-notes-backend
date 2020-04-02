@@ -15,13 +15,20 @@ namespace YellowNotes.Core.Repositories
 
         public NoteRepository(DatabaseContext context) => this.context = context;
 
-        public async Task<bool> CreateNote(Note note, CancellationToken cancellationToken)
+        public async Task<int?> CreateNote(Note note, CancellationToken cancellationToken)
         {
             note.ModificationDate = DateTime.Now;
             note.IsRemoved = false;
 
             context.Notes.Add(note);
-            return await context.SaveChangesAsync(cancellationToken) > 0;
+            var success = await context.SaveChangesAsync(cancellationToken) > 0;
+            return success ? new int?(note.NoteId) : null;
+        }
+
+        public async Task<Note> GetNote(int noteId, CancellationToken cancellationToken)
+        {
+            return await context.Notes.SingleOrDefaultAsync(x => x.NoteId == noteId,
+                cancellationToken);
         }
 
         public async Task<IEnumerable<Note>> GetNotes(int takeCount, int skipCount, string email,
@@ -39,7 +46,7 @@ namespace YellowNotes.Core.Repositories
         {
             var record = await context.Notes
                 .SingleOrDefaultAsync(x => x.NoteId == note.NoteId, cancellationToken);
-            
+
             if (record == null)
             {
                 return false;
@@ -48,7 +55,7 @@ namespace YellowNotes.Core.Repositories
             record.ModificationDate = DateTime.Now;
             record.Title = note.Title ?? record.Title;
             record.Content = note.Content ?? record.Content;
-            
+
             return await context.SaveChangesAsync(cancellationToken) > 0;
         }
 
@@ -56,7 +63,7 @@ namespace YellowNotes.Core.Repositories
         {
             var record = await context.Notes
                 .SingleOrDefaultAsync(x => x.NoteId == noteId, cancellationToken);
-            
+
             if (record == null)
             {
                 return false;

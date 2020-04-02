@@ -21,13 +21,19 @@ namespace YellowNotes.Core.Services
             this.mapper = mapper;
         }
 
-        public async Task<bool> CreateNote(NoteDto note, string email,
+        public async Task<int?> CreateNote(NoteDto note, string email,
             CancellationToken cancellationToken)
         {
             var mappedNote = mapper.Map<Note>(note);
             mappedNote.UserEmail = email;
 
             return await repository.CreateNote(mappedNote, cancellationToken);
+        }
+
+        public async Task<NoteDto> GetNote(int noteId, CancellationToken cancellationToken)
+        {
+            var note = await repository.GetNote(noteId, cancellationToken);
+            return mapper.Map<NoteDto>(note);
         }
 
         public async Task<IEnumerable<NoteDto>> GetNotes(int takeCount, int skipCount, string email,

@@ -8,7 +8,9 @@ namespace YellowNotes.Core.Repositories
 {
     public interface INoteRepository
     {
-        Task<bool> CreateNote(Note note, CancellationToken cancellationToken);
+        Task<int?> CreateNote(Note note, CancellationToken cancellationToken);
+
+        Task<Note> GetNote(int noteId, CancellationToken cancellationToken);
 
         Task<IEnumerable<Note>> GetNotes(int takeCount, int skipCount, string email,
             CancellationToken cancellationToken);

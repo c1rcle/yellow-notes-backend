@@ -16,6 +16,18 @@ namespace YellowNotes.Api.Controllers
 
         public NotesController(INoteService noteService) => this.noteService = noteService;
 
+        [HttpGet("{noteId}")]
+        public async Task<ActionResult<NoteDto>> GetNote(int noteId,
+            CancellationToken cancellationToken = default)
+        {
+            var note = await noteService.GetNote(noteId, cancellationToken);
+            if (note == null)
+            {
+                return NotFound();
+            }
+            return Ok(note);
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<NoteDto>>> GetNotes(
             [FromQuery] int takeCount = 20, [FromQuery] int skipCount = 0,
@@ -31,13 +43,13 @@ namespace YellowNotes.Api.Controllers
             CancellationToken cancellationToken = default)
         {
             var userEmail = HttpContext.GetEmailFromClaims();
+            var noteId = await noteService.CreateNote(noteDto, userEmail, cancellationToken);
 
-            var success = await noteService.CreateNote(noteDto, userEmail, cancellationToken);
-            if (!success)
+            if (noteId == null)
             {
                 return UnprocessableEntity("Failed to create note");
             }
-            return NoContent();
+            return CreatedAtAction(nameof(GetNote), new { noteId = noteId}, noteDto);
         }
 
         [HttpPut("{noteId}")]
@@ -46,6 +58,7 @@ namespace YellowNotes.Api.Controllers
         {
             noteDto.NoteId = noteId;
             var success = await noteService.UpdateNote(noteDto, cancellationToken);
+
             if (!success)
             {
                 return UnprocessableEntity("Failed to update note");
@@ -58,6 +71,7 @@ namespace YellowNotes.Api.Controllers
             CancellationToken cancellationToken = default)
         {
             var success = await noteService.DeleteNote(noteId, cancellationToken);
+
             if (!success)
             {
                 return NotFound();
