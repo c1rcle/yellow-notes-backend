@@ -15,14 +15,14 @@ namespace YellowNotes.Core.Repositories
 
         public NoteRepository(DatabaseContext context) => this.context = context;
 
-        public async Task<int?> CreateNote(Note note, CancellationToken cancellationToken)
+        public async Task<Note> CreateNote(Note note, CancellationToken cancellationToken)
         {
             note.ModificationDate = DateTime.Now;
             note.IsRemoved = false;
 
             context.Notes.Add(note);
             var success = await context.SaveChangesAsync(cancellationToken) > 0;
-            return success ? new int?(note.NoteId) : null;
+            return success ? note : null;
         }
 
         public async Task<Note> GetNote(int noteId, CancellationToken cancellationToken)
@@ -31,15 +31,19 @@ namespace YellowNotes.Core.Repositories
                 cancellationToken);
         }
 
-        public async Task<IEnumerable<Note>> GetNotes(int takeCount, int skipCount, string email,
-            CancellationToken cancellationToken)
+        public async Task<Tuple<int, IEnumerable<Note>>> GetNotes(int takeCount, int skipCount,
+            string email, CancellationToken cancellationToken)
         {
-            return await context.Notes.Where(x => x.UserEmail == email && x.IsRemoved == false)
+            var count = await context.Notes
+                .CountAsync(x => x.UserEmail == email && x.IsRemoved == false);
+            var notes = await context.Notes.Where(x => x.UserEmail == email && x.IsRemoved == false)
                 .OrderByDescending(x => x.ModificationDate)
                 .Skip(skipCount)
                 .Take(takeCount)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
+
+            return Tuple.Create(count, notes as IEnumerable<Note>);
         }
 
         public async Task<bool> UpdateNote(NoteDto note, CancellationToken cancellationToken)

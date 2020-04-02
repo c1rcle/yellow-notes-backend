@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -21,13 +22,14 @@ namespace YellowNotes.Core.Services
             this.mapper = mapper;
         }
 
-        public async Task<int?> CreateNote(NoteDto note, string email,
+        public async Task<NoteDto> CreateNote(NoteDto note, string email,
             CancellationToken cancellationToken)
         {
             var mappedNote = mapper.Map<Note>(note);
             mappedNote.UserEmail = email;
 
-            return await repository.CreateNote(mappedNote, cancellationToken);
+            var result = await repository.CreateNote(mappedNote, cancellationToken);
+            return mapper.Map<NoteDto>(result);
         }
 
         public async Task<NoteDto> GetNote(int noteId, CancellationToken cancellationToken)
@@ -36,11 +38,11 @@ namespace YellowNotes.Core.Services
             return mapper.Map<NoteDto>(note);
         }
 
-        public async Task<IEnumerable<NoteDto>> GetNotes(int takeCount, int skipCount, string email,
+        public async Task<Tuple<int, IEnumerable<NoteDto>>> GetNotes(int takeCount, int skipCount, string email,
             CancellationToken cancellationToken)
         {
             var notes = await repository.GetNotes(takeCount, skipCount, email, cancellationToken);
-            return notes.Select(x => mapper.Map<NoteDto>(x));
+            return Tuple.Create(notes.Item1, notes.Item2.Select(x => mapper.Map<NoteDto>(x)));
         }
 
         public async Task<bool> UpdateNote(NoteDto note, CancellationToken cancellationToken)

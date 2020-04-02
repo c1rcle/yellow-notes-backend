@@ -43,19 +43,20 @@ namespace YellowNotes.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(NoteDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> CreateNote([FromBody] NoteDto noteDto,
             CancellationToken cancellationToken = default)
         {
             var userEmail = HttpContext.GetEmailFromClaims();
-            var noteId = await noteService.CreateNote(noteDto, userEmail, cancellationToken);
+            var note = await noteService.CreateNote(noteDto, userEmail, cancellationToken);
 
-            if (noteId == null)
+            if (note == null)
             {
                 return UnprocessableEntity("Failed to create note");
             }
-            return CreatedAtAction(nameof(GetNote), new { noteId = noteId }, noteDto);
+
+            return CreatedAtAction(nameof(GetNote), new { noteId = note.NoteId }, note);
         }
 
         [HttpPut("{noteId}")]
