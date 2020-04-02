@@ -13,14 +13,13 @@ namespace YellowNotes.Api.Filters
         {
             var isAnonymousAllowed = context.ActionDescriptor.EndpointMetadata
                 .Any(x => x.GetType() == typeof(AllowAnonymousAttribute));
-
+                
             if (isAnonymousAllowed)
             {
                 return;
             }
 
             var userEmail = context.HttpContext.GetEmailFromClaims();
-
             if (userEmail == null)
             {
                 context.Result = new UnauthorizedObjectResult(
