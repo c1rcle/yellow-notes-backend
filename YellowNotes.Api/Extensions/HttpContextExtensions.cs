@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Security.Claims;
 
-namespace YellowNotes.Core.Utility
+namespace YellowNotes.Api.Extensions
 {
     public static class HttpContextExtensions
     {

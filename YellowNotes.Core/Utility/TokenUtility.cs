@@ -7,17 +7,24 @@ namespace YellowNotes.Core.Utility
 {
     public static class TokenUtility
     {
-        public static string Authorize(string userEmail, IHeaderDictionary httpHeaders)
+        public static string Validate(string userEmail, IHeaderDictionary httpHeaders)
         {
             string error = null;
+
             string token = ParseFromHeaders(httpHeaders);
             if (token == null)
             {
-                error = "No token";
+                return "No token";
             }
 
-            bool valid = Validate(token, userEmail);
-            if (!valid)
+            var securityToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
+            var decodedEmail = securityToken.Payload["email"] as string;
+
+            var isUserAuthorized = decodedEmail == userEmail;
+            var tokenExpired = securityToken.ValidTo < DateTime.UtcNow;
+
+            var validToken = isUserAuthorized && !tokenExpired;
+            if (!validToken)
             {
                 error = "Bad token";
             }
@@ -32,17 +39,6 @@ namespace YellowNotes.Core.Utility
 
             var token = authorizationString.ToString().Split(' ')[1];
             return token;
-        }
-
-        private static bool Validate(string token, string userEmail)
-        {
-            var securityToken = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
-            var decodedEmail = securityToken.Payload["email"] as string;
-
-            var isUserAuthorized = decodedEmail == userEmail;
-            var tokenExpired = securityToken.ValidTo < DateTime.UtcNow;
-
-            return isUserAuthorized && !tokenExpired;
         }
     }
 }

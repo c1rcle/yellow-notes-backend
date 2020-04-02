@@ -67,12 +67,6 @@ namespace YellowNotes.Api.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] UserDto userDto,
             CancellationToken cancellationToken = default)
         {
-            var errorMessage = TokenUtility.Authorize(userDto.Email, Request.Headers);
-            if (errorMessage != null)
-            {
-                return Unauthorized(errorMessage);
-            }
-
             var success = await userService.ChangePassword(userDto, cancellationToken);
             if (!success)
             {
