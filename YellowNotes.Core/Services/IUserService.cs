@@ -12,8 +12,6 @@ namespace YellowNotes.Core.Services
 
         Task<bool> ChangePassword(UserDto user, CancellationToken cancellationToken);
 
-        string GenerateJWT(UserDto user);
-      
-        bool ValidateToken(string token, UserDto user);
+        string GenerateJwt(UserDto user);
     }
 }
