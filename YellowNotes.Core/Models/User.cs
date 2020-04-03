@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YellowNotes.Core.Models
 {
@@ -13,5 +15,8 @@ namespace YellowNotes.Core.Models
 
         [Required]
         public string PasswordHash { get; set; }
+
+        [InverseProperty("User")]
+        public virtual ICollection<Note> Notes { get; set; }
     }
 }

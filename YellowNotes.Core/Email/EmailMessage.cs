@@ -1,9 +1,7 @@
-﻿namespace YellowNotes.Core
+﻿namespace YellowNotes.Core.Email
 {
     public class EmailMessage
     {
-        public string FromEmailAddress { get; set; }
-
         public string ToEmailAddress { get; set; }
 
         public string Subject { get; set; }

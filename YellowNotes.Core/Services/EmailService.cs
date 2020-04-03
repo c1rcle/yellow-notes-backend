@@ -20,25 +20,25 @@ namespace YellowNotes.Core.Services
         public async Task SendEmail(EmailMessage emailMessage, CancellationToken cancellationToken)
         {
             var email = new MimeMessage();
-            email.From.Add(new MailboxAddress(emailMessage.FromEmailAddress));
+            email.From.Add(new MailboxAddress("Yellow Notes", emailConfiguration.SmtpUsername));
             email.To.Add(new MailboxAddress(emailMessage.ToEmailAddress));
             email.Subject = emailMessage.Subject;
-            
+
             email.Body = new TextPart(TextFormat.Html)
             {
                 Text = emailMessage.Content
             };
-            
+
             using (var client = new SmtpClient())
-	        {
-                client.ServerCertificateValidationCallback = 
+            {
+                client.ServerCertificateValidationCallback =
                     (sender, certificate, certChainType, errors) => true;
                 await client.ConnectAsync(emailConfiguration.SmtpServer,
                     emailConfiguration.SmtpPort, true, cancellationToken);
                 await client.AuthenticateAsync(emailConfiguration.SmtpUsername,
                     emailConfiguration.SmtpPassword, cancellationToken);
-                    
-		        await client.SendAsync(email, cancellationToken);
+
+                await client.SendAsync(email, cancellationToken);
                 await client.DisconnectAsync(true, cancellationToken);
             }
         }

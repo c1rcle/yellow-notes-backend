@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YellowNotes.Core;
 
 namespace YellowNotes.Core.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20200330121358_CreateNoteEntity")]
+    partial class CreateNoteEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,10 +34,6 @@ namespace YellowNotes.Core.Migrations
                     b.Property<DateTime>("ModificationDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
                     b.Property<string>("UserEmail")
                         .IsRequired()
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4")
@@ -43,8 +41,7 @@ namespace YellowNotes.Core.Migrations
 
                     b.Property<string>("Variant")
                         .IsRequired()
-                        .HasColumnType("varchar(4) CHARACTER SET utf8mb4")
-                        .HasMaxLength(4)
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .IsUnicode(false);
 
                     b.HasKey("NoteId");
