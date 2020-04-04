@@ -4,5 +4,5 @@ root = true
 indent_style = space
 indent_size = 4
 insert_final_newline = true
-csharp_prefer_braces = true
+csharp_prefer_braces = true:error
 max-line-length = 100

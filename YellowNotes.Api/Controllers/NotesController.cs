@@ -57,6 +57,11 @@ namespace YellowNotes.Api.Controllers
         public async Task<IActionResult> CreateNote([FromBody] NoteDto noteDto,
             CancellationToken cancellationToken = default)
         {
+            if (noteDto.NoteId != 0)
+            {
+                return BadRequest();
+            }
+
             var userEmail = HttpContext.GetEmailFromClaims();
             var note = await noteService.CreateNote(noteDto, userEmail, cancellationToken);
 

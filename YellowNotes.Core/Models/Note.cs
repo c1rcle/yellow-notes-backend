@@ -10,14 +10,13 @@ namespace YellowNotes.Core.Models
         public int NoteId { get; set; }
 
         [Required]
-        public string UserEmail { get; set; }
+        public int UserId { get; set; }
 
         [Required]
         public DateTime ModificationDate { get; set; }
 
         [Required]
-        [StringLength(4)]
-        public string Variant { get; set; }
+        public NoteVariant Variant { get; set; }
 
         [Required]
         public bool IsRemoved { get; set; }
@@ -27,7 +26,7 @@ namespace YellowNotes.Core.Models
 
         public string Content { get; set; }
 
-        [ForeignKey("UserEmail")]
+        [ForeignKey("UserId")]
         [InverseProperty("Notes")]
         public virtual User User { get; set; }
     }

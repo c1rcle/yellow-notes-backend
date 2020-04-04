@@ -68,7 +68,8 @@ namespace YellowNotes.Api
             });
 
             services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IUserService, UserService>(x =>
+                ActivatorUtilities.CreateInstance<UserService>(x, keyList[0]));
             services.AddTransient<INoteRepository, NoteRepository>();
             services.AddTransient<INoteService, NoteService>();
 

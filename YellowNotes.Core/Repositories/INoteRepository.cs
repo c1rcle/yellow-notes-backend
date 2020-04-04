@@ -9,7 +9,7 @@ namespace YellowNotes.Core.Repositories
 {
     public interface INoteRepository
     {
-        Task<Note> CreateNote(Note note, CancellationToken cancellationToken);
+        Task<Note> CreateNote(Note note, string email, CancellationToken cancellationToken);
 
         Task<Note> GetNote(int noteId, CancellationToken cancellationToken);
 

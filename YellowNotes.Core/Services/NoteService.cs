@@ -26,9 +26,8 @@ namespace YellowNotes.Core.Services
             CancellationToken cancellationToken)
         {
             var mappedNote = mapper.Map<Note>(note);
-            mappedNote.UserEmail = email;
 
-            var result = await repository.CreateNote(mappedNote, cancellationToken);
+            var result = await repository.CreateNote(mappedNote, email, cancellationToken);
             return mapper.Map<NoteDto>(result);
         }
 
