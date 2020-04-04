@@ -9,20 +9,12 @@ namespace YellowNotes.Core.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private DatabaseContext context;
+        private readonly DatabaseContext context;
 
         public UserRepository(DatabaseContext context) => this.context = context;
 
         public async Task<bool> CreateUser(User user, CancellationToken cancellationToken)
         {
-            var emailExists = await context.Users
-                .AnyAsync(x => x.Email == user.Email, cancellationToken);
-
-            if (emailExists)
-            {
-                return false;
-            }
-
             context.Users.Add(user);
             return await context.SaveChangesAsync(cancellationToken) > 0;
         }

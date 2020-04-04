@@ -6,7 +6,7 @@ namespace YellowNotes.Core
     public class DatabaseContext : DbContext
     {
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
-            :base(options)
+            : base(options)
         {
         }
 
@@ -19,10 +19,11 @@ namespace YellowNotes.Core
             modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(e => e.Email).IsUnicode(false);
-                entity.Property(e => e.PasswordHash).IsUnicode(false); 
+                entity.Property(e => e.PasswordHash).IsUnicode(false);
+                entity.HasIndex(e => e.Email).IsUnique();
             });
 
-            modelBuilder.Entity<Note>(entity => 
+            modelBuilder.Entity<Note>(entity =>
             {
                 entity.HasOne(e => e.User)
                     .WithMany(e => e.Notes)

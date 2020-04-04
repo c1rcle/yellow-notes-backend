@@ -15,8 +15,13 @@ namespace YellowNotes.Core.Repositories
 
         public NoteRepository(DatabaseContext context) => this.context = context;
 
-        public async Task<Note> CreateNote(Note note, CancellationToken cancellationToken)
+        public async Task<Note> CreateNote(Note note, string email,
+            CancellationToken cancellationToken)
         {
+            var user = await context.Users
+                .SingleOrDefaultAsync(x => x.Email == email, cancellationToken);
+
+            note.UserId = user.UserId;
             note.ModificationDate = DateTime.Now;
             note.IsRemoved = false;
 
@@ -35,8 +40,8 @@ namespace YellowNotes.Core.Repositories
             string email, CancellationToken cancellationToken)
         {
             var count = await context.Notes
-                .CountAsync(x => x.UserEmail == email && x.IsRemoved == false);
-            var notes = await context.Notes.Where(x => x.UserEmail == email && x.IsRemoved == false)
+                .CountAsync(x => x.User.Email == email && x.IsRemoved == false);
+            var notes = await context.Notes.Where(x => x.User.Email == email && x.IsRemoved == false)
                 .OrderByDescending(x => x.ModificationDate)
                 .Skip(skipCount)
                 .Take(takeCount)

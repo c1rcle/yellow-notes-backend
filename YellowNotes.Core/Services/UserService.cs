@@ -15,18 +15,18 @@ namespace YellowNotes.Core.Services
 {
     public class UserService : IUserService
     {
-        private IUserRepository repository;
+        private readonly IUserRepository repository;
 
-        private IConfiguration configuration;
+        private readonly IConfiguration configuration;
 
-        private string jwtSecret;
+        private readonly string secretKey;
 
         public UserService(IUserRepository repository, IConfiguration configuration,
-            string jwtSecret)
+            string secretKey)
         {
             this.repository = repository;
             this.configuration = configuration;
-            this.jwtSecret = jwtSecret;
+            this.secretKey = secretKey;
         }
 
         public async Task<bool> CreateUser(UserDto user, CancellationToken cancellationToken)
@@ -52,7 +52,7 @@ namespace YellowNotes.Core.Services
         public string GenerateJwt(UserDto user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(jwtSecret);
+            var key = Encoding.ASCII.GetBytes(configuration.GetValue<string>(secretKey));
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]

@@ -36,27 +36,27 @@ namespace YellowNotes.Core.Migrations
                         .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("UserEmail")
-                        .IsRequired()
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4")
-                        .IsUnicode(false);
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Variant")
-                        .IsRequired()
-                        .HasColumnType("varchar(4) CHARACTER SET utf8mb4")
-                        .HasMaxLength(4)
-                        .IsUnicode(false);
+                    b.Property<int>("Variant")
+                        .HasColumnType("int");
 
                     b.HasKey("NoteId");
 
-                    b.HasIndex("UserEmail");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Notes");
                 });
 
             modelBuilder.Entity("YellowNotes.Core.Models.User", b =>
                 {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4")
                         .IsUnicode(false);
 
@@ -68,7 +68,10 @@ namespace YellowNotes.Core.Migrations
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("datetime(6)");
 
-                    b.HasKey("Email");
+                    b.HasKey("UserId");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -77,7 +80,7 @@ namespace YellowNotes.Core.Migrations
                 {
                     b.HasOne("YellowNotes.Core.Models.User", "User")
                         .WithMany("Notes")
-                        .HasForeignKey("UserEmail")
+                        .HasForeignKey("UserId")
                         .HasConstraintName("FK_User")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
