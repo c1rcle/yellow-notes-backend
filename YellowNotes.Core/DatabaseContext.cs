@@ -24,11 +24,9 @@ namespace YellowNotes.Core
 
             modelBuilder.Entity<Note>(entity => 
             {
-                entity.Property(e => e.UserEmail).IsUnicode(false);
-
                 entity.HasOne(e => e.User)
                     .WithMany(e => e.Notes)
-                    .HasForeignKey(e => e.UserEmail)
+                    .HasForeignKey(e => e.UserId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_User");
             });
