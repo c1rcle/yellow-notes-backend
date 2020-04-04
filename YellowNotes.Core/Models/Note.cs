@@ -16,8 +16,7 @@ namespace YellowNotes.Core.Models
         public DateTime ModificationDate { get; set; }
 
         [Required]
-        [StringLength(4)]
-        public string Variant { get; set; }
+        public NoteVariant Variant { get; set; }
 
         [Required]
         public bool IsRemoved { get; set; }

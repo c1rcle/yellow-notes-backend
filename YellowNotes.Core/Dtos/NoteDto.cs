@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using YellowNotes.Core.Models;
 
 namespace YellowNotes.Core.Dtos
 {
@@ -10,8 +11,7 @@ namespace YellowNotes.Core.Dtos
         public DateTime ModificationDate { get; set; }
 
         [Required]
-        [StringLength(4)]
-        public string Variant { get; set; } = "text";
+        public NoteVariant Variant { get; set; } = NoteVariant.Text;
 
         public string Title { get; set; }
 

@@ -25,7 +25,6 @@ namespace YellowNotes.Core
             modelBuilder.Entity<Note>(entity => 
             {
                 entity.Property(e => e.UserEmail).IsUnicode(false);
-                entity.Property(e => e.Variant).IsUnicode(false);
 
                 entity.HasOne(e => e.User)
                     .WithMany(e => e.Notes)
