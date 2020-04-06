@@ -16,7 +16,14 @@ namespace YellowNotes.Core.Repositories
         public async Task<bool> CreateUser(User user, CancellationToken cancellationToken)
         {
             context.Users.Add(user);
-            return await context.SaveChangesAsync(cancellationToken) > 0;
+            try
+            {
+                return await context.SaveChangesAsync(cancellationToken) > 0;
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }
         }
 
         public async Task<bool> VerifyPassword(UserDto user, CancellationToken cancellationToken)
