@@ -64,6 +64,10 @@ namespace YellowNotes.Core.Repositories
             record.ModificationDate = DateTime.Now;
             record.Title = note.Title ?? record.Title;
             record.Content = note.Content ?? record.Content;
+            record.ImageUrl = note.ImageUrl ?? record.ImageUrl;
+            record.Color = note.Color ?? record.Color;
+            record.Tags = note.Tags ?? record.Tags;
+            record.IsBlocked = note.IsBlocked;
 
             return await context.SaveChangesAsync(cancellationToken) > 0;
         }

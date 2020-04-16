@@ -16,5 +16,13 @@ namespace YellowNotes.Core.Dtos
         public string Title { get; set; }
 
         public string Content { get; set; }
+
+        public string ImageUrl { get; set; }
+
+        public string Color { get; set; }
+
+        public string Tags { get; set; }
+
+        public bool IsBlocked { get; set; }
     }
 }
