@@ -26,7 +26,16 @@ namespace YellowNotes.Core.Repositories
             note.IsRemoved = false;
 
             context.Notes.Add(note);
-            var success = await context.SaveChangesAsync(cancellationToken) > 0;
+
+            bool success;
+            try
+            {
+                success = await context.SaveChangesAsync(cancellationToken) > 0;
+            }
+            catch (DbUpdateException)
+            {
+                return null;
+            }
             return success ? note : null;
         }
 
