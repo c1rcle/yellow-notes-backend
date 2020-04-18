@@ -17,6 +17,10 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using System.Text.Json;
 using AutoMapper;
 using YellowNotes.Core.Dtos;
+using System.Reflection;
+using System;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.Swagger;
 
 namespace YellowNotes.Api
 {
@@ -106,10 +110,21 @@ namespace YellowNotes.Api
                 options.SmtpPassword = emailConfig.SmtpPassword;
             });
             services.AddSingleton<IEmailService, EmailService>();
+            services.AddSwaggerGen((options) =>
+            {
+                options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Yellow Notes", Version = "v1"});
+            });
         }
 
         public void Configure(IApplicationBuilder app)
         {
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "YELLOW NOTES V1");
+            });
+
             if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
