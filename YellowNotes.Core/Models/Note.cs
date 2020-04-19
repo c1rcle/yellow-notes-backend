@@ -26,6 +26,16 @@ namespace YellowNotes.Core.Models
 
         public string Content { get; set; }
 
+        public string ImageUrl { get; set; }
+
+        [Required]
+        public string Color { get; set; }
+
+        public string Tags { get; set; }
+
+        [Required]
+        public bool IsBlocked { get; set; }
+
         [ForeignKey("UserId")]
         [InverseProperty("Notes")]
         public virtual User User { get; set; }
