@@ -43,7 +43,8 @@ namespace YellowNotes.Core.Repositories
             CancellationToken cancellationToken)
         {
             var note = await context.Notes.Include(x => x.User)
-                .SingleOrDefaultAsync(x => x.NoteId == noteId, cancellationToken);
+                .SingleOrDefaultAsync(x => x.NoteId == noteId && x.IsRemoved == false,
+                    cancellationToken);
 
             if (note == null)
             {
@@ -74,8 +75,9 @@ namespace YellowNotes.Core.Repositories
         public async Task<object> UpdateNote(NoteDto note, string email,
             CancellationToken cancellationToken)
         {
-            var record = await context.Notes.Include(x => x.User)
-                .SingleOrDefaultAsync(x => x.NoteId == note.NoteId, cancellationToken);
+            var record = await context.Notes
+                .SingleOrDefaultAsync(x => x.NoteId == note.NoteId && x.IsRemoved == false,
+                    cancellationToken);
 
             if (record == null)
             {
@@ -100,8 +102,9 @@ namespace YellowNotes.Core.Repositories
         public async Task<object> DeleteNote(int noteId, string email,
             CancellationToken cancellationToken)
         {
-            var record = await context.Notes.Include(x => x.User)
-                .SingleOrDefaultAsync(x => x.NoteId == noteId, cancellationToken);
+            var record = await context.Notes
+                .SingleOrDefaultAsync(x => x.NoteId == noteId && x.IsRemoved == false,
+                    cancellationToken);
 
             if (record == null)
             {
