@@ -11,13 +11,13 @@ namespace YellowNotes.Core.Repositories
     {
         Task<Note> CreateNote(Note note, string email, CancellationToken cancellationToken);
 
-        Task<Note> GetNote(int noteId, CancellationToken cancellationToken);
+        Task<object> GetNote(int noteId, string email, CancellationToken cancellationToken);
 
         Task<Tuple<int, IEnumerable<Note>>> GetNotes(int takeCount, int skipCount, string email,
             CancellationToken cancellationToken);
 
-        Task<bool> UpdateNote(NoteDto note, CancellationToken cancellationToken);
+        Task<object> UpdateNote(NoteDto note, string email, CancellationToken cancellationToken);
 
-        Task<bool> DeleteNote(int noteId, CancellationToken cancellationToken);
+        Task<object> DeleteNote(int noteId, string email, CancellationToken cancellationToken);
     }
 }

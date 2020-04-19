@@ -24,12 +24,18 @@ namespace YellowNotes.Api.Controllers
         public async Task<ActionResult<NoteDto>> GetNote(int noteId,
             CancellationToken cancellationToken = default)
         {
-            var note = await noteService.GetNote(noteId, cancellationToken);
-            if (note == null)
+            var userEmail = HttpContext.GetEmailFromClaims();
+            var result = await noteService.GetNote(noteId, userEmail, cancellationToken);
+
+            if (result == null)
             {
                 return NotFound();
             }
-            return Ok(note);
+            else if (result is string)
+            {
+                return Unauthorized(result);
+            }
+            return Ok(result);
         }
 
         [HttpGet]
@@ -69,7 +75,6 @@ namespace YellowNotes.Api.Controllers
             {
                 return UnprocessableEntity("Failed to create note");
             }
-
             return CreatedAtAction(nameof(GetNote), new { noteId = note.NoteId }, note);
         }
 
@@ -80,13 +85,19 @@ namespace YellowNotes.Api.Controllers
             CancellationToken cancellationToken = default)
         {
             noteDto.NoteId = noteId;
-            var success = await noteService.UpdateNote(noteDto, cancellationToken);
+            var userEmail = HttpContext.GetEmailFromClaims();
+            var result = await noteService.UpdateNote(noteDto, userEmail, cancellationToken);
 
-            if (!success)
+            if (result is string)
             {
-                return UnprocessableEntity("Failed to update note");
+                return Unauthorized(result);
             }
-            return NoContent();
+            else
+            {
+                return (bool)result 
+                    ? (IActionResult)NoContent() 
+                    : UnprocessableEntity("Failed to update note");
+            }
         }
 
         [HttpDelete("{noteId}")]
@@ -95,13 +106,17 @@ namespace YellowNotes.Api.Controllers
         public async Task<IActionResult> DeleteNote(int noteId,
             CancellationToken cancellationToken = default)
         {
-            var success = await noteService.DeleteNote(noteId, cancellationToken);
+            var userEmail = HttpContext.GetEmailFromClaims();
+            var result = await noteService.DeleteNote(noteId, userEmail, cancellationToken);
 
-            if (!success)
+            if (result is string)
             {
-                return NotFound();
+                return Unauthorized(result);
             }
-            return NoContent();
+            else
+            {
+                return (bool)result ? (IActionResult)NoContent() : NotFound();
+            }
         }
     }
 }

@@ -31,27 +31,30 @@ namespace YellowNotes.Core.Services
             return mapper.Map<NoteDto>(result);
         }
 
-        public async Task<NoteDto> GetNote(int noteId, CancellationToken cancellationToken)
+        public async Task<object> GetNote(int noteId, string email,
+            CancellationToken cancellationToken)
         {
-            var note = await repository.GetNote(noteId, cancellationToken);
+            var note = await repository.GetNote(noteId, email, cancellationToken);
             return mapper.Map<NoteDto>(note);
         }
 
-        public async Task<Tuple<int, IEnumerable<NoteDto>>> GetNotes(int takeCount, int skipCount, string email,
-            CancellationToken cancellationToken)
+        public async Task<Tuple<int, IEnumerable<NoteDto>>> GetNotes(int takeCount, int skipCount,
+            string email, CancellationToken cancellationToken)
         {
             var notes = await repository.GetNotes(takeCount, skipCount, email, cancellationToken);
             return Tuple.Create(notes.Item1, notes.Item2.Select(x => mapper.Map<NoteDto>(x)));
         }
 
-        public async Task<bool> UpdateNote(NoteDto note, CancellationToken cancellationToken)
+        public async Task<object> UpdateNote(NoteDto note, string email, 
+            CancellationToken cancellationToken)
         {
-            return await repository.UpdateNote(note, cancellationToken);
+            return await repository.UpdateNote(note, email, cancellationToken);
         }
 
-        public async Task<bool> DeleteNote(int noteId, CancellationToken cancellationToken)
+        public async Task<object> DeleteNote(int noteId, string email,
+            CancellationToken cancellationToken)
         {
-            return await repository.DeleteNote(noteId, cancellationToken);
+            return await repository.DeleteNote(noteId, email, cancellationToken);
         }
     }
 }
