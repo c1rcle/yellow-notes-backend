@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using YellowNotes.Core.Dtos;
+using YellowNotes.Core.Utility;
 
 namespace YellowNotes.Core.Services
 {
@@ -10,7 +11,7 @@ namespace YellowNotes.Core.Services
 
         Task<object> GetNote(int noteId, string email, CancellationToken cancellationToken);
 
-        Task<NotesDto> GetNotes(int takeCount, int skipCount, string email,
+        Task<NotesDto> GetNotes(GetNotesConfig config, string email,
             CancellationToken cancellationToken);
 
         Task<object> UpdateNote(NoteDto note, string email, CancellationToken cancellationToken);

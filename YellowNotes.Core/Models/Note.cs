@@ -12,6 +12,8 @@ namespace YellowNotes.Core.Models
         [Required]
         public int UserId { get; set; }
 
+        public int? CategoryId { get; set; }
+
         [Required]
         public DateTime ModificationDate { get; set; }
 
@@ -31,13 +33,15 @@ namespace YellowNotes.Core.Models
         [Required]
         public string Color { get; set; }
 
-        public string Category { get; set; }
-
         [Required]
         public bool IsBlocked { get; set; }
 
         [ForeignKey("UserId")]
         [InverseProperty("Notes")]
         public virtual User User { get; set; }
+
+        [ForeignKey("CategoryId")]
+        [InverseProperty("Notes")]
+        public virtual Category Category { get; set; }
     }
 }

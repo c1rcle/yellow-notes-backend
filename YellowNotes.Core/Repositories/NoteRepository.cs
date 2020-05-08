@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using YellowNotes.Core.Dtos;
 using YellowNotes.Core.Models;
+using YellowNotes.Core.Utility;
 
 namespace YellowNotes.Core.Repositories
 {
@@ -56,15 +57,17 @@ namespace YellowNotes.Core.Repositories
             return note;
         }
 
-        public async Task<NotesData> GetNotes(int takeCount, int skipCount,
-            string email, CancellationToken cancellationToken)
+        public async Task<NotesData> GetNotes(GetNotesConfig config, string email,
+            CancellationToken cancellationToken)
         {
             var count = await context.Notes
                 .CountAsync(x => x.User.Email == email && x.IsRemoved == false);
-            var notes = await context.Notes.Where(x => x.User.Email == email && x.IsRemoved == false)
+            var notes = await context.Notes.Where(x => x.User.Email == email
+                && x.IsRemoved == false
+                && config.CategoryIds.Contains(x.Category.CategoryId))
                 .OrderByDescending(x => x.ModificationDate)
-                .Skip(skipCount)
-                .Take(takeCount)
+                .Skip(config.SkipCount)
+                .Take(config.TakeCount)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
@@ -92,7 +95,7 @@ namespace YellowNotes.Core.Repositories
             record.Content = note.Content ?? record.Content;
             record.ImageUrl = note.ImageUrl ?? record.ImageUrl;
             record.Color = note.Color ?? record.Color;
-            record.Category = note.Tags ?? record.Category;
+            record.CategoryId = note.CategoryId ?? record.CategoryId;
             record.IsBlocked = note.IsBlocked;
 
             return await context.SaveChangesAsync(cancellationToken) > 0;

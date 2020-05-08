@@ -5,6 +5,7 @@ using AutoMapper;
 using YellowNotes.Core.Dtos;
 using YellowNotes.Core.Models;
 using YellowNotes.Core.Repositories;
+using YellowNotes.Core.Utility;
 
 namespace YellowNotes.Core.Services
 {
@@ -36,10 +37,10 @@ namespace YellowNotes.Core.Services
             return mapper.Map<NoteDto>(note);
         }
 
-        public async Task<NotesDto> GetNotes(int takeCount, int skipCount,
-            string email, CancellationToken cancellationToken)
+        public async Task<NotesDto> GetNotes(GetNotesConfig config, string email,
+            CancellationToken cancellationToken)
         {
-            var notesData = await repository.GetNotes(takeCount, skipCount, email, cancellationToken);
+            var notesData = await repository.GetNotes(config, email, cancellationToken);
             return new NotesDto
             {
                 Count = notesData.Count,

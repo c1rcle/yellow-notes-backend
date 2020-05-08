@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using YellowNotes.Api.Extensions;
 using YellowNotes.Core.Dtos;
 using YellowNotes.Core.Services;
+using YellowNotes.Core.Utility;
 
 namespace YellowNotes.Api.Controllers
 {
@@ -40,23 +41,22 @@ namespace YellowNotes.Api.Controllers
         [ProducesResponseType(typeof(NotesDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<NotesDto>> GetNotes(
-            [FromQuery] int takeCount = 20, [FromQuery] int skipCount = 0,
+            [FromQuery] GetNotesConfig config,
             CancellationToken cancellationToken = default)
         {
-            if (takeCount < 1 || skipCount < 0)
+            if (config.TakeCount < 1 || config.SkipCount < 0)
             {
                 return BadRequest();
             }
 
             var userEmail = HttpContext.GetEmailFromClaims();
-            var notes = await noteService.GetNotes(takeCount, skipCount, userEmail,
-                cancellationToken);
-
+            var notes = await noteService.GetNotes(config, userEmail, cancellationToken);
             return Ok(notes);
         }
 
         [HttpPost]
         [ProducesResponseType(typeof(NoteDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> CreateNote([FromBody] NoteDto noteDto,
             CancellationToken cancellationToken = default)
