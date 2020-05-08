@@ -39,6 +39,15 @@ namespace YellowNotes.Core
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Category");
             });
+
+            modelBuilder.Entity<Category>(entity =>
+            {
+                entity.HasOne(e => e.User)
+                    .WithMany(e => e.Categories)
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_User");
+            });
         }
     }
 }

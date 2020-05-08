@@ -10,7 +10,14 @@ namespace YellowNotes.Core.Models
         public int CategoryId { get; set; }
 
         [Required]
+        public int UserId { get; set; }
+
+        [Required]
         public string Name { get; set; }
+
+        [ForeignKey("UserId")]
+        [InverseProperty("Categories")]
+        public virtual User User { get; set; }
 
         [InverseProperty("Category")]
         public virtual ICollection<Note> Notes { get; set; }

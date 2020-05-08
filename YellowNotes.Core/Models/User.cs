@@ -21,5 +21,8 @@ namespace YellowNotes.Core.Models
 
         [InverseProperty("User")]
         public virtual ICollection<Note> Notes { get; set; }
+
+        [InverseProperty("User")]
+        public virtual ICollection<Category> Categories { get; set; }
     }
 }

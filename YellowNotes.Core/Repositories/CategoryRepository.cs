@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using YellowNotes.Core.Models;
 
 namespace YellowNotes.Core.Repositories
@@ -11,22 +13,46 @@ namespace YellowNotes.Core.Repositories
 
         public CategoryRepository(DatabaseContext context) => this.context = context;
 
-        public Task<Category> CreateCategory(Category category, string email,
+        public async Task<Category> CreateCategory(Category category, string email,
             CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            var user = await context.Users
+                .SingleOrDefaultAsync(x => x.Email == email, cancellationToken);
+
+            category.UserId = user.UserId;
+            context.Categories.Add(category);
+
+            var success = await context.SaveChangesAsync(cancellationToken) > 0;
+            return success ? category : null;
         }
 
-        public Task<object> DeleteCategory(int categoryId, string email,
+        public async Task<IEnumerable<Category>> GetCategories(string email,
             CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            return await context.Categories.Where(x => x.User.Email == email)
+                .OrderBy(x => x.Name)
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
         }
 
-        public Task<IEnumerable<Category>> GetCategories(string email,
+        public async Task<object> DeleteCategory(int categoryId, string email,
             CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            var record = await context.Categories.Include(x => x.User)
+                .SingleOrDefaultAsync(x => x.CategoryId == categoryId, cancellationToken);
+
+            if (record == null)
+            {
+                return null;
+            }
+            else if (record.User.Email != email)
+            {
+                return "Requested resource cannot be deleted!";
+            }
+
+            context.Categories.Remove(record);
+            return await context.SaveChangesAsync(cancellationToken) > 0;
+
         }
     }
 }
