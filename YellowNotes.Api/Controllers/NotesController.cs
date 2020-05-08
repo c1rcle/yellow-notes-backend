@@ -1,12 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using YellowNotes.Api.Extensions;
 using YellowNotes.Core.Dtos;
 using YellowNotes.Core.Services;
-using System.Threading;
-using System.Collections.Generic;
-using YellowNotes.Api.Extensions;
-using Microsoft.AspNetCore.Http;
-using System;
 
 namespace YellowNotes.Api.Controllers
 {
@@ -39,9 +37,9 @@ namespace YellowNotes.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(Tuple<int, IEnumerable<NoteDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(NotesDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<IEnumerable<NoteDto>>> GetNotes(
+        public async Task<ActionResult<NotesDto>> GetNotes(
             [FromQuery] int takeCount = 20, [FromQuery] int skipCount = 0,
             CancellationToken cancellationToken = default)
         {
@@ -54,7 +52,7 @@ namespace YellowNotes.Api.Controllers
             var notes = await noteService.GetNotes(takeCount, skipCount, userEmail,
                 cancellationToken);
 
-            return Ok(new { count = notes.Item1, notes = notes.Item2 });
+            return Ok(notes);
         }
 
         [HttpPost]
@@ -94,8 +92,8 @@ namespace YellowNotes.Api.Controllers
             }
             else
             {
-                return (bool)result 
-                    ? (IActionResult)NoContent() 
+                return (bool)result
+                    ? NoContent() as IActionResult
                     : UnprocessableEntity("Failed to update note");
             }
         }
@@ -115,7 +113,9 @@ namespace YellowNotes.Api.Controllers
             }
             else
             {
-                return (bool)result ? (IActionResult)NoContent() : NotFound();
+                return (bool)result
+                    ? NoContent() as IActionResult
+                    : NotFound();
             }
         }
     }

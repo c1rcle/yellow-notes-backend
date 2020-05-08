@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using System.Threading;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using YellowNotes.Core.Email;
 
 namespace YellowNotes.Core.Services

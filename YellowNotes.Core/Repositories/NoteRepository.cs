@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -57,7 +56,7 @@ namespace YellowNotes.Core.Repositories
             return note;
         }
 
-        public async Task<Tuple<int, IEnumerable<Note>>> GetNotes(int takeCount, int skipCount,
+        public async Task<NotesData> GetNotes(int takeCount, int skipCount,
             string email, CancellationToken cancellationToken)
         {
             var count = await context.Notes
@@ -69,7 +68,7 @@ namespace YellowNotes.Core.Repositories
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
-            return Tuple.Create(count, notes as IEnumerable<Note>);
+            return new NotesData { Count = count, Notes = notes };
         }
 
         public async Task<object> UpdateNote(NoteDto note, string email,

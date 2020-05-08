@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,14 +36,18 @@ namespace YellowNotes.Core.Services
             return mapper.Map<NoteDto>(note);
         }
 
-        public async Task<Tuple<int, IEnumerable<NoteDto>>> GetNotes(int takeCount, int skipCount,
+        public async Task<NotesDto> GetNotes(int takeCount, int skipCount,
             string email, CancellationToken cancellationToken)
         {
-            var notes = await repository.GetNotes(takeCount, skipCount, email, cancellationToken);
-            return Tuple.Create(notes.Item1, notes.Item2.Select(x => mapper.Map<NoteDto>(x)));
+            var notesData = await repository.GetNotes(takeCount, skipCount, email, cancellationToken);
+            return new NotesDto
+            {
+                Count = notesData.Count,
+                Notes = notesData.Notes.Select(x => mapper.Map<NoteDto>(x))
+            };
         }
 
-        public async Task<object> UpdateNote(NoteDto note, string email, 
+        public async Task<object> UpdateNote(NoteDto note, string email,
             CancellationToken cancellationToken)
         {
             return await repository.UpdateNote(note, email, cancellationToken);
