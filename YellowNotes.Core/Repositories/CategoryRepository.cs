@@ -30,7 +30,9 @@ namespace YellowNotes.Core.Repositories
             var user = await context.Users
                 .SingleOrDefaultAsync(x => x.Email == email, cancellationToken);
 
-            var count = await context.Categories.CountAsync(x => x.User.Email == email);
+            var count = await context.Categories
+                .CountAsync(x => x.User.Email == email, cancellationToken);
+                
             if (count < maxCategoryCount)
             {
                 mappedCategory.UserId = user.UserId;
