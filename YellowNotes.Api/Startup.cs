@@ -15,9 +15,9 @@ using YellowNotes.Core.Email;
 using YellowNotes.Core.Services;
 using YellowNotes.Api.Filters;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using AutoMapper;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace YellowNotes.Api
 {
@@ -63,9 +63,9 @@ namespace YellowNotes.Api
 
             services.AddControllers(options =>
             {
+                options.Filters.Add(typeof(AuthorizeActionFilter));
                 options.Filters.Add(typeof(ValidateModelStateFilter));
-                options.Filters.Add(typeof(ValidateTokenFilter)); 
-                options.Filters.Add(new AuthorizeFilter());
+                options.Filters.Add(typeof(ValidateTokenFilter));
             });
 
             services.AddTransient<IUserRepository, UserRepository>();
@@ -109,7 +109,7 @@ namespace YellowNotes.Api
             services.AddSingleton<IEmailService, EmailService>();
             services.AddSwaggerGen((options) =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Yellow Notes", Version = "v1"});
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Yellow Notes", Version = "v1" });
             });
         }
 
