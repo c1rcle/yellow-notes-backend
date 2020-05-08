@@ -31,7 +31,7 @@ namespace YellowNotes.Core.Models
         [Required]
         public string Color { get; set; }
 
-        public string Tags { get; set; }
+        public string Category { get; set; }
 
         [Required]
         public bool IsBlocked { get; set; }

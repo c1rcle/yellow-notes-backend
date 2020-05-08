@@ -93,7 +93,7 @@ namespace YellowNotes.Core.Repositories
             record.Content = note.Content ?? record.Content;
             record.ImageUrl = note.ImageUrl ?? record.ImageUrl;
             record.Color = note.Color ?? record.Color;
-            record.Tags = note.Tags ?? record.Tags;
+            record.Category = note.Tags ?? record.Category;
             record.IsBlocked = note.IsBlocked;
 
             return await context.SaveChangesAsync(cancellationToken) > 0;
