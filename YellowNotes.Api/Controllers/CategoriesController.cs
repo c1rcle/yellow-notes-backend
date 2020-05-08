@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using YellowNotes.Api.Extensions;
-using YellowNotes.Core.Models;
+using YellowNotes.Core.Dtos;
 using YellowNotes.Core.Repositories;
 
 namespace YellowNotes.Api.Controllers
@@ -19,8 +19,8 @@ namespace YellowNotes.Api.Controllers
             this.categoryRepository = categoryRepository;
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Category>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<Category>> GetCategories(
+        [ProducesResponseType(typeof(IEnumerable<CategoryDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories(
             CancellationToken cancellationToken = default)
         {
             var userEmail = HttpContext.GetEmailFromClaims();
@@ -29,10 +29,10 @@ namespace YellowNotes.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<ActionResult> CreateCategory([FromBody] Category category,
+        public async Task<ActionResult> CreateCategory([FromBody] CategoryDto category,
             CancellationToken cancellationToken = default)
         {
             if (category.CategoryId != 0)
@@ -70,7 +70,7 @@ namespace YellowNotes.Api.Controllers
             {
                 return (bool)result
                     ? NoContent() as IActionResult
-                    : NotFound();                
+                    : NotFound();
             }
         }
     }
