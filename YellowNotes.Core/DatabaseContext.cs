@@ -31,7 +31,7 @@ namespace YellowNotes.Core
                     .WithMany(e => e.Notes)
                     .HasForeignKey(e => e.UserId)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK_User");
+                    .HasConstraintName("FK_Note_User");
 
                 entity.HasOne(e => e.Category)
                     .WithMany(e => e.Notes)
@@ -46,7 +46,7 @@ namespace YellowNotes.Core
                     .WithMany(e => e.Categories)
                     .HasForeignKey(e => e.UserId)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK_User");
+                    .HasConstraintName("FK_Category_User");
             });
         }
     }
