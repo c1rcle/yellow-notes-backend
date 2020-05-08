@@ -20,6 +20,7 @@ namespace YellowNotes.Api.Controllers
         [HttpGet("{noteId}")]
         [ProducesResponseType(typeof(NoteDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<NoteDto>> GetNote(int noteId,
             CancellationToken cancellationToken = default)
         {
@@ -77,6 +78,7 @@ namespace YellowNotes.Api.Controllers
         }
 
         [HttpPut("{noteId}")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> UpdateNote(int noteId, [FromBody] NoteDto noteDto,
@@ -99,6 +101,7 @@ namespace YellowNotes.Api.Controllers
         }
 
         [HttpDelete("{noteId}")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteNote(int noteId,
