@@ -38,21 +38,14 @@ namespace YellowNotes.Core.Repositories
             return success ? note : null;
         }
 
-        public async Task<object> GetNote(int noteId, string email,
+        public async Task<Note> GetNote(int noteId, string email,
             CancellationToken cancellationToken)
         {
-            var note = await context.Notes.Include(x => x.User)
+            var note = await context.Notes
+                .Include(x => x.User)
                 .SingleOrDefaultAsync(x => x.NoteId == noteId && x.IsRemoved == false,
                     cancellationToken);
 
-            if (note == null)
-            {
-                return null;
-            }
-            else if (note.User.Email != email)
-            {
-                return "Requested resource is not available";
-            }
             return note;
         }
 
@@ -74,21 +67,12 @@ namespace YellowNotes.Core.Repositories
             return new NotesData { Count = count, Notes = notes };
         }
 
-        public async Task<object> UpdateNote(NoteDto note, string email,
+        public async Task<bool> UpdateNote(NoteDto note, string email,
             CancellationToken cancellationToken)
         {
             var record = await context.Notes.Include(x => x.User)
                 .SingleOrDefaultAsync(x => x.NoteId == note.NoteId && x.IsRemoved == false,
                     cancellationToken);
-
-            if (record == null)
-            {
-                return false;
-            }
-            else if (record.User.Email != email)
-            {
-                return "Requested resource cannot be updated";
-            }
 
             record.ModificationDate = DateTime.Now;
             record.Title = note.Title ?? record.Title;
@@ -108,26 +92,18 @@ namespace YellowNotes.Core.Repositories
                     return false;
                 }
             }
-            
+
             record.CategoryId = note.CategoryId;
             return await context.SaveChangesAsync(cancellationToken) > 0;
         }
 
-        public async Task<object> DeleteNote(int noteId, string email,
+        public async Task<bool> DeleteNote(int noteId, string email,
             CancellationToken cancellationToken)
         {
-            var record = await context.Notes.Include(x => x.User)
+            var record = await context.Notes
+                .Include(x => x.User)
                 .SingleOrDefaultAsync(x => x.NoteId == noteId && x.IsRemoved == false,
                     cancellationToken);
-
-            if (record == null)
-            {
-                return false;
-            }
-            else if (record.User.Email != email)
-            {
-                return "Requested resource cannot be deleted!";
-            }
 
             record.IsRemoved = true;
             return await context.SaveChangesAsync(cancellationToken) > 0;

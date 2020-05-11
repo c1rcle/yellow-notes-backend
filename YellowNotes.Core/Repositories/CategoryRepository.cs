@@ -2,9 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using YellowNotes.Core.Dtos;
 using YellowNotes.Core.Models;
 
 namespace YellowNotes.Core.Repositories
@@ -13,63 +11,53 @@ namespace YellowNotes.Core.Repositories
     {
         private readonly DatabaseContext context;
 
-        private readonly IMapper mapper;
+        public CategoryRepository(DatabaseContext context) => this.context = context;
 
-        private readonly int maxCategoryCount = 10;
-
-        public CategoryRepository(DatabaseContext context, IMapper mapper)
-        {
-            this.context = context;
-            this.mapper = mapper;
-        }
-
-        public async Task<CategoryDto> CreateCategory(CategoryDto category, string email,
+        public async Task<Category> CreateCategory(Category category, string email,
             CancellationToken cancellationToken)
         {
-            var mappedCategory = mapper.Map<Category>(category);
             var user = await context.Users
                 .SingleOrDefaultAsync(x => x.Email == email, cancellationToken);
 
-            var count = await context.Categories
-                .CountAsync(x => x.User.Email == email, cancellationToken);
-
-            if (count < maxCategoryCount)
-            {
-                mappedCategory.UserId = user.UserId;
-                context.Categories.Add(mappedCategory);
-            }
+            category.UserId = user.UserId;
+            context.Categories.Add(category);
 
             var success = await context.SaveChangesAsync(cancellationToken) > 0;
-            return success ? mapper.Map<CategoryDto>(mappedCategory) : null;
+            return success ? category : null;
         }
 
-        public async Task<IEnumerable<CategoryDto>> GetCategories(string email,
+        public async Task<Category> GetCategory(int categoryId, CancellationToken cancellationToken)
+        {
+            var category = await context.Categories
+                .Include(x => x.User)
+                .SingleOrDefaultAsync(x => x.CategoryId == categoryId, cancellationToken);
+
+            return category;
+        }
+
+        public async Task<IEnumerable<Category>> GetCategories(string email,
             CancellationToken cancellationToken)
         {
-            var categories = await context.Categories.Where(x => x.User.Email == email)
+            return await context.Categories.Where(x => x.User.Email == email)
                 .OrderBy(x => x.Name)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
-            return categories.Select(x => mapper.Map<CategoryDto>(x));
         }
 
-        public async Task<object> DeleteCategory(int categoryId, string email,
+        public async Task<bool> DeleteCategory(int categoryId, string email,
             CancellationToken cancellationToken)
         {
             var record = await context.Categories.Include(x => x.User)
                 .SingleOrDefaultAsync(x => x.CategoryId == categoryId, cancellationToken);
 
-            if (record == null)
-            {
-                return false;
-            }
-            else if (record.User.Email != email)
-            {
-                return "Requested resource cannot be deleted!";
-            }
-
             context.Categories.Remove(record);
             return await context.SaveChangesAsync(cancellationToken) > 0;
+        }
+
+        public async Task<int> GetCategoryCount(string email, CancellationToken cancellationToken)
+        {
+            return await context.Categories
+                .CountAsync(x => x.User.Email == email, cancellationToken);
         }
     }
 }

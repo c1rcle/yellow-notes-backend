@@ -1,19 +1,23 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using YellowNotes.Core.Dtos;
+using YellowNotes.Core.Models;
 
 namespace YellowNotes.Core.Repositories
 {
     public interface ICategoryRepository
     {
-        Task<CategoryDto> CreateCategory(CategoryDto category, string email,
+        Task<Category> CreateCategory(Category category, string email,
             CancellationToken cancellationToken);
 
-        Task<IEnumerable<CategoryDto>> GetCategories(string email,
+        Task<Category> GetCategory(int categoryId, CancellationToken cancellationToken);
+
+        Task<IEnumerable<Category>> GetCategories(string email,
             CancellationToken cancellationToken);
 
-        Task<object> DeleteCategory(int categoryId, string email,
+        Task<bool> DeleteCategory(int categoryId, string email,
             CancellationToken cancellationToken);
+
+        Task<int> GetCategoryCount(string email, CancellationToken cancellationToken);
     }
 }

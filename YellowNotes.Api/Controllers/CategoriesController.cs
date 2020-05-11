@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using YellowNotes.Api.Extensions;
 using YellowNotes.Core.Dtos;
-using YellowNotes.Core.Repositories;
+using YellowNotes.Core.Services;
 
 namespace YellowNotes.Api.Controllers
 {
@@ -13,10 +13,24 @@ namespace YellowNotes.Api.Controllers
     [Route("/[controller]")]
     public class CategoriesController : ControllerBase
     {
-        private readonly ICategoryRepository categoryRepository;
+        private readonly ICategoryService categoryService;
 
-        public CategoriesController(ICategoryRepository categoryRepository) =>
-            this.categoryRepository = categoryRepository;
+        public CategoriesController(ICategoryService categoryService) =>
+            this.categoryService = categoryService;
+
+        [HttpGet("{categoryId}")]
+        [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCategory(int categoryId,
+            CancellationToken cancellationToken = default)
+        {
+            var userEmail = HttpContext.GetEmailFromClaims();
+            var result = await categoryService
+                .GetCategory(categoryId, userEmail, cancellationToken);
+
+            return result.GetActionResult(this);
+        }
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<CategoryDto>), StatusCodes.Status200OK)]
@@ -24,7 +38,7 @@ namespace YellowNotes.Api.Controllers
             CancellationToken cancellationToken = default)
         {
             var userEmail = HttpContext.GetEmailFromClaims();
-            var categories = await categoryRepository.GetCategories(userEmail, cancellationToken);
+            var categories = await categoryService.GetCategories(userEmail, cancellationToken);
             return Ok(categories);
         }
 
@@ -41,37 +55,30 @@ namespace YellowNotes.Api.Controllers
             }
 
             var userEmail = HttpContext.GetEmailFromClaims();
-            var result = await categoryRepository
+            var result = await categoryService
                 .CreateCategory(category, userEmail, cancellationToken);
 
             if (result == null)
             {
                 return UnprocessableEntity("Failed to create category");
             }
-            return Ok(result);
+
+            return CreatedAtAction(nameof(GetCategory),
+                new { categoryId = result.CategoryId }, result);
         }
 
         [HttpDelete("{categoryId}")]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteCategory(int categoryId,
             CancellationToken cancellationToken = default)
         {
             var userEmail = HttpContext.GetEmailFromClaims();
-            var result = await categoryRepository
+            var result = await categoryService
                 .DeleteCategory(categoryId, userEmail, cancellationToken);
 
-            if (result is string)
-            {
-                return Unauthorized(result);
-            }
-            else
-            {
-                return (bool)result
-                    ? NoContent() as IActionResult
-                    : NotFound();
-            }
+            return result.GetActionResult(this);
         }
     }
 }

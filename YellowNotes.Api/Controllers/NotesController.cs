@@ -19,23 +19,14 @@ namespace YellowNotes.Api.Controllers
 
         [HttpGet("{noteId}")]
         [ProducesResponseType(typeof(NoteDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetNote(int noteId,
             CancellationToken cancellationToken = default)
         {
             var userEmail = HttpContext.GetEmailFromClaims();
             var result = await noteService.GetNote(noteId, userEmail, cancellationToken);
-
-            if (result == null)
-            {
-                return NotFound();
-            }
-            else if (result is string)
-            {
-                return Unauthorized(result);
-            }
-            return Ok(result);
+            return result.GetActionResult(this);
         }
 
         [HttpGet]
@@ -77,8 +68,9 @@ namespace YellowNotes.Api.Controllers
         }
 
         [HttpPut("{noteId}")]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> UpdateNote(int noteId, [FromBody] NoteDto noteDto,
             CancellationToken cancellationToken = default)
@@ -87,21 +79,12 @@ namespace YellowNotes.Api.Controllers
             var userEmail = HttpContext.GetEmailFromClaims();
             var result = await noteService.UpdateNote(noteDto, userEmail, cancellationToken);
 
-            if (result is string)
-            {
-                return Unauthorized(result);
-            }
-            else
-            {
-                return (bool)result
-                    ? NoContent() as IActionResult
-                    : UnprocessableEntity("Failed to update note");
-            }
+            return result.GetActionResult(this);
         }
 
         [HttpDelete("{noteId}")]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteNote(int noteId,
             CancellationToken cancellationToken = default)
@@ -109,16 +92,7 @@ namespace YellowNotes.Api.Controllers
             var userEmail = HttpContext.GetEmailFromClaims();
             var result = await noteService.DeleteNote(noteId, userEmail, cancellationToken);
 
-            if (result is string)
-            {
-                return Unauthorized(result);
-            }
-            else
-            {
-                return (bool)result
-                    ? NoContent() as IActionResult
-                    : NotFound();
-            }
+            return result.GetActionResult(this);
         }
     }
 }
