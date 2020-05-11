@@ -32,7 +32,7 @@ namespace YellowNotes.Core.Repositories
 
             var count = await context.Categories
                 .CountAsync(x => x.User.Email == email, cancellationToken);
-                
+
             if (count < maxCategoryCount)
             {
                 mappedCategory.UserId = user.UserId;
@@ -61,7 +61,7 @@ namespace YellowNotes.Core.Repositories
 
             if (record == null)
             {
-                return null;
+                return false;
             }
             else if (record.User.Email != email)
             {
