@@ -11,7 +11,7 @@ namespace YellowNotes.Core.Services
 
         Task<ResultHandler> GetNote(int noteId, string email, CancellationToken cancellationToken);
 
-        Task<NotesDto> GetNotes(GetNotesConfig config, string email,
+        Task<NotesDto> GetNotes(NoteQueryDto query, string email,
             CancellationToken cancellationToken);
 
         Task<ResultHandler> UpdateNote(NoteDto note, string email,

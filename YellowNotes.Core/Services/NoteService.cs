@@ -47,10 +47,14 @@ namespace YellowNotes.Core.Services
             return new ResultHandler(HttpStatusCode.OK, mapper.Map<NoteDto>(note));
         }
 
-        public async Task<NotesDto> GetNotes(GetNotesConfig config, string email,
+        public async Task<NotesDto> GetNotes(NoteQueryDto query, string email,
             CancellationToken cancellationToken)
         {
-            var notesData = await repository.GetNotes(config, email, cancellationToken);
+            var notesData = await repository.GetNotes(query, email, cancellationToken);
+            notesData.Notes = notesData.Notes
+                .Where(x => IsCategorySelected(x.CategoryId, query.CategoryIds))
+                .ToList();
+
             return new NotesDto
             {
                 Count = notesData.Count,
@@ -100,6 +104,15 @@ namespace YellowNotes.Core.Services
             return success
                 ? new ResultHandler(HttpStatusCode.NoContent)
                 : new ResultHandler(HttpStatusCode.NotFound);
+        }
+
+        private bool IsCategorySelected(int? categoryId, int[] categoryIds)
+        {
+            if (categoryIds.Length > 0)
+            {
+                return categoryId.HasValue ? categoryIds.Contains(categoryId.Value) : false;
+            }
+            return true;
         }
     }
 }

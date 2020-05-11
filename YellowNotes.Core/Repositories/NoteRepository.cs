@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using YellowNotes.Core.Dtos;
 using YellowNotes.Core.Models;
-using YellowNotes.Core.Utility;
 
 namespace YellowNotes.Core.Repositories
 {
@@ -47,7 +46,7 @@ namespace YellowNotes.Core.Repositories
                     cancellationToken);
         }
 
-        public async Task<NotesData> GetNotes(GetNotesConfig config, string email,
+        public async Task<NotesData> GetNotes(NoteQueryDto query, string email,
             CancellationToken cancellationToken)
         {
             var count = await context.Notes
@@ -56,12 +55,11 @@ namespace YellowNotes.Core.Repositories
             var notes = await context.Notes.Where(x => x.User.Email == email
                 && x.IsRemoved == false)
                 .OrderByDescending(x => x.ModificationDate)
-                .Skip(config.SkipCount)
-                .Take(config.TakeCount)
+                .Skip(query.SkipCount)
+                .Take(query.TakeCount)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
-            notes = notes.Where(x => config.IsCategorySelected(x.CategoryId)).ToList();
             return new NotesData { Count = count, Notes = notes };
         }
 

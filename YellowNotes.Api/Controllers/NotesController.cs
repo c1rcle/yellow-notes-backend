@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using YellowNotes.Api.Extensions;
 using YellowNotes.Core.Dtos;
 using YellowNotes.Core.Services;
-using YellowNotes.Core.Utility;
 
 namespace YellowNotes.Api.Controllers
 {
@@ -32,16 +31,16 @@ namespace YellowNotes.Api.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(NotesDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetNotes([FromQuery] GetNotesConfig config,
+        public async Task<IActionResult> GetNotes([FromQuery] NoteQueryDto query,
             CancellationToken cancellationToken = default)
         {
-            if (config.TakeCount < 1 || config.SkipCount < 0)
+            if (query.TakeCount < 1 || query.SkipCount < 0)
             {
                 return BadRequest();
             }
 
             var userEmail = HttpContext.GetEmailFromClaims();
-            var notes = await noteService.GetNotes(config, userEmail, cancellationToken);
+            var notes = await noteService.GetNotes(query, userEmail, cancellationToken);
             return Ok(notes);
         }
 
