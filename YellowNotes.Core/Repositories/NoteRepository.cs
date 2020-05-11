@@ -24,7 +24,6 @@ namespace YellowNotes.Core.Repositories
             note.UserId = user.UserId;
             note.ModificationDate = DateTime.Now;
             note.IsRemoved = false;
-
             context.Notes.Add(note);
 
             bool success;
@@ -62,15 +61,16 @@ namespace YellowNotes.Core.Repositories
         {
             var count = await context.Notes
                 .CountAsync(x => x.User.Email == email && x.IsRemoved == false);
+
             var notes = await context.Notes.Where(x => x.User.Email == email
-                && x.IsRemoved == false
-                && config.CategoryIds.Contains(x.Category.CategoryId))
+                && x.IsRemoved == false)
                 .OrderByDescending(x => x.ModificationDate)
                 .Skip(config.SkipCount)
                 .Take(config.TakeCount)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
+            notes = notes.Where(x => config.IsCategorySelected(x.CategoryId)).ToList();
             return new NotesData { Count = count, Notes = notes };
         }
 
@@ -83,7 +83,7 @@ namespace YellowNotes.Core.Repositories
 
             if (record == null)
             {
-                return null;
+                return false;
             }
             else if (record.User.Email != email)
             {
@@ -95,9 +95,21 @@ namespace YellowNotes.Core.Repositories
             record.Content = note.Content ?? record.Content;
             record.ImageUrl = note.ImageUrl ?? record.ImageUrl;
             record.Color = note.Color ?? record.Color;
-            record.CategoryId = note.CategoryId ?? record.CategoryId;
             record.IsBlocked = note.IsBlocked;
 
+            if (note.CategoryId != null)
+            {
+                var category = await context.Categories.SingleOrDefaultAsync(
+                    x => x.CategoryId == note.CategoryId && x.UserId == record.UserId,
+                    cancellationToken);
+
+                if (category == null)
+                {
+                    return false;
+                }
+            }
+            
+            record.CategoryId = note.CategoryId;
             return await context.SaveChangesAsync(cancellationToken) > 0;
         }
 
@@ -110,7 +122,7 @@ namespace YellowNotes.Core.Repositories
 
             if (record == null)
             {
-                return null;
+                return false;
             }
             else if (record.User.Email != email)
             {

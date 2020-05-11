@@ -36,7 +36,7 @@ namespace YellowNotes.Core
                 entity.HasOne(e => e.Category)
                     .WithMany(e => e.Notes)
                     .HasForeignKey(e => e.CategoryId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_Category");
             });
 
