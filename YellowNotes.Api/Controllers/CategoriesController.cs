@@ -20,7 +20,7 @@ namespace YellowNotes.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<CategoryDto>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories(
+        public async Task<IActionResult> GetCategories(
             CancellationToken cancellationToken = default)
         {
             var userEmail = HttpContext.GetEmailFromClaims();
@@ -32,7 +32,7 @@ namespace YellowNotes.Api.Controllers
         [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<ActionResult> CreateCategory([FromBody] CategoryDto category,
+        public async Task<IActionResult> CreateCategory([FromBody] CategoryDto category,
             CancellationToken cancellationToken = default)
         {
             if (category.CategoryId != 0)

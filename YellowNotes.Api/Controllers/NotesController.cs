@@ -21,7 +21,7 @@ namespace YellowNotes.Api.Controllers
         [ProducesResponseType(typeof(NoteDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<NoteDto>> GetNote(int noteId,
+        public async Task<IActionResult> GetNote(int noteId,
             CancellationToken cancellationToken = default)
         {
             var userEmail = HttpContext.GetEmailFromClaims();
@@ -41,8 +41,7 @@ namespace YellowNotes.Api.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(NotesDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<NotesDto>> GetNotes(
-            [FromQuery] GetNotesConfig config,
+        public async Task<IActionResult> GetNotes([FromQuery] GetNotesConfig config,
             CancellationToken cancellationToken = default)
         {
             if (config.TakeCount < 1 || config.SkipCount < 0)
