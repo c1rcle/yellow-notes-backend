@@ -1,23 +1,22 @@
+using System.Text;
+using System.Text.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System.Text.Json;
+using Microsoft.OpenApi.Models;
+using AutoMapper;
+using YellowNotes.Api.Filters;
 using YellowNotes.Core;
 using YellowNotes.Core.Dtos;
-using YellowNotes.Core.Repositories;
 using YellowNotes.Core.Email;
+using YellowNotes.Core.Repositories;
 using YellowNotes.Core.Services;
-using YellowNotes.Api.Filters;
-using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using AutoMapper;
-using Microsoft.OpenApi.Models;
 
 namespace YellowNotes.Api
 {
@@ -63,9 +62,9 @@ namespace YellowNotes.Api
 
             services.AddControllers(options =>
             {
+                options.Filters.Add(typeof(AuthorizeActionFilter));
                 options.Filters.Add(typeof(ValidateModelStateFilter));
-                options.Filters.Add(typeof(ValidateTokenFilter)); 
-                options.Filters.Add(new AuthorizeFilter());
+                options.Filters.Add(typeof(ValidateTokenFilter));
             });
 
             services.AddTransient<IUserRepository, UserRepository>();
@@ -73,6 +72,8 @@ namespace YellowNotes.Api
                 ActivatorUtilities.CreateInstance<UserService>(x, keyList[0]));
             services.AddTransient<INoteRepository, NoteRepository>();
             services.AddTransient<INoteService, NoteService>();
+            services.AddTransient<ICategoryRepository, CategoryRepository>();
+            services.AddTransient<ICategoryService, CategoryService>();
 
             services.AddAuthentication(x =>
             {
@@ -109,7 +110,7 @@ namespace YellowNotes.Api
             services.AddSingleton<IEmailService, EmailService>();
             services.AddSwaggerGen((options) =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Yellow Notes", Version = "v1"});
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Yellow Notes", Version = "v1" });
             });
         }
 

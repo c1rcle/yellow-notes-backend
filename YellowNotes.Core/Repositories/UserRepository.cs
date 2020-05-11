@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
-using CryptoHelper;
 using Microsoft.EntityFrameworkCore;
+using CryptoHelper;
 using YellowNotes.Core.Dtos;
 using YellowNotes.Core.Models;
 

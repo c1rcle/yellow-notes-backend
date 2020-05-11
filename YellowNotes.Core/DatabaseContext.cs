@@ -14,6 +14,8 @@ namespace YellowNotes.Core
 
         public virtual DbSet<Note> Notes { get; set; }
 
+        public virtual DbSet<Category> Categories { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>(entity =>
@@ -29,7 +31,22 @@ namespace YellowNotes.Core
                     .WithMany(e => e.Notes)
                     .HasForeignKey(e => e.UserId)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK_User");
+                    .HasConstraintName("FK_Note_User");
+
+                entity.HasOne(e => e.Category)
+                    .WithMany(e => e.Notes)
+                    .HasForeignKey(e => e.CategoryId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("FK_Category");
+            });
+
+            modelBuilder.Entity<Category>(entity =>
+            {
+                entity.HasOne(e => e.User)
+                    .WithMany(e => e.Categories)
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_Category_User");
             });
         }
     }

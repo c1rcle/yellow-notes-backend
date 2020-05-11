@@ -1,8 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using YellowNotes.Core.Dtos;
+using YellowNotes.Core.Utility;
 
 namespace YellowNotes.Core.Services
 {
@@ -10,13 +9,15 @@ namespace YellowNotes.Core.Services
     {
         Task<NoteDto> CreateNote(NoteDto note, string email, CancellationToken cancellationToken);
 
-        Task<object> GetNote(int noteId, string email, CancellationToken cancellationToken);
+        Task<ResultHandler> GetNote(int noteId, string email, CancellationToken cancellationToken);
 
-        Task<Tuple<int, IEnumerable<NoteDto>>> GetNotes(int takeCount, int skipCount, string email,
+        Task<NotesDto> GetNotes(NoteQueryDto query, string email,
             CancellationToken cancellationToken);
 
-        Task<object> UpdateNote(NoteDto note, string email, CancellationToken cancellationToken);
+        Task<ResultHandler> UpdateNote(NoteDto note, string email,
+            CancellationToken cancellationToken);
 
-        Task<object> DeleteNote(int noteId, string email, CancellationToken cancellationToken);
+        Task<ResultHandler> DeleteNote(int noteId, string email,
+            CancellationToken cancellationToken);
     }
 }
