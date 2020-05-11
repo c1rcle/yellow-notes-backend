@@ -28,11 +28,9 @@ namespace YellowNotes.Core.Repositories
 
         public async Task<Category> GetCategory(int categoryId, CancellationToken cancellationToken)
         {
-            var category = await context.Categories
+            return await context.Categories
                 .Include(x => x.User)
                 .SingleOrDefaultAsync(x => x.CategoryId == categoryId, cancellationToken);
-
-            return category;
         }
 
         public async Task<IEnumerable<Category>> GetCategories(string email,

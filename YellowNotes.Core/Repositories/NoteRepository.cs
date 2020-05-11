@@ -41,12 +41,10 @@ namespace YellowNotes.Core.Repositories
         public async Task<Note> GetNote(int noteId, string email,
             CancellationToken cancellationToken)
         {
-            var note = await context.Notes
+            return await context.Notes
                 .Include(x => x.User)
                 .SingleOrDefaultAsync(x => x.NoteId == noteId && x.IsRemoved == false,
                     cancellationToken);
-
-            return note;
         }
 
         public async Task<NotesData> GetNotes(GetNotesConfig config, string email,
