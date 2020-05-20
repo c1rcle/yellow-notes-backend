@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
-using System.Threading;
-using YellowNotes.Core.Email;
-using MimeKit;
-using MailKit.Net.Smtp;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using MailKit.Net.Smtp;
+using MimeKit;
 using MimeKit.Text;
+using YellowNotes.Core.Email;
 
 namespace YellowNotes.Core.Services
 {

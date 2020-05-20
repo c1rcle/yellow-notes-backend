@@ -1,12 +1,12 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using YellowNotes.Core.Dtos;
 using YellowNotes.Core.Services;
-using System.Threading;
 using YellowNotes.Core.Utility;
-using Microsoft.AspNetCore.Http;
 
 namespace YellowNotes.Api.Controllers
 {

@@ -8,6 +8,8 @@ namespace YellowNotes.Core.Dtos
     {
         public int NoteId { get; set; }
 
+        public int? CategoryId { get; set; }
+
         public DateTime ModificationDate { get; set; }
 
         [Required]
@@ -20,8 +22,6 @@ namespace YellowNotes.Core.Dtos
         public string ImageUrl { get; set; }
 
         public string Color { get; set; }
-
-        public string Tags { get; set; }
 
         public bool IsBlocked { get; set; }
     }
