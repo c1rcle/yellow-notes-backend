@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,21 +47,14 @@ namespace YellowNotes.Core.Repositories
                     cancellationToken);
         }
 
-        public async Task<NotesData> GetNotes(NoteQueryDto query, string email,
+        public async Task<IEnumerable<Note>> GetAllNotes(string email,
             CancellationToken cancellationToken)
         {
-            var count = await context.Notes
-                .CountAsync(x => x.User.Email == email && x.IsRemoved == false);
-
-            var notes = await context.Notes.Where(x => x.User.Email == email
+            return await context.Notes.Where(x => x.User.Email == email
                 && x.IsRemoved == false)
                 .OrderByDescending(x => x.ModificationDate)
-                .Skip(query.SkipCount)
-                .Take(query.TakeCount)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
-
-            return new NotesData { Count = count, Notes = notes };
         }
 
         public async Task<bool> UpdateNote(NoteDto note, string email,

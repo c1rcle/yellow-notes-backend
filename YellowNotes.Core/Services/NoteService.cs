@@ -50,15 +50,15 @@ namespace YellowNotes.Core.Services
         public async Task<NotesDto> GetNotes(NoteQueryDto query, string email,
             CancellationToken cancellationToken)
         {
-            var notesData = await repository.GetNotes(query, email, cancellationToken);
-            notesData.Notes = notesData.Notes
-                .Where(x => IsCategorySelected(x.CategoryId, query.CategoryIds))
-                .ToList();
+            var notes = await repository.GetAllNotes(email, cancellationToken);
+            notes = notes.Where(x => IsCategorySelected(x.CategoryId, query.CategoryIds));
 
             return new NotesDto
             {
-                Count = notesData.Count,
-                Notes = notesData.Notes.Select(x => mapper.Map<NoteDto>(x))
+                Count = notes.Count(),
+                Notes = notes.Skip(query.SkipCount)
+                    .Take(query.TakeCount)
+                    .Select(x => mapper.Map<NoteDto>(x))
             };
         }
 

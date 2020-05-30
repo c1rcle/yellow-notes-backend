@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using YellowNotes.Core.Dtos;
@@ -11,8 +12,7 @@ namespace YellowNotes.Core.Repositories
 
         Task<Note> GetNote(int noteId, string email, CancellationToken cancellationToken);
 
-        Task<NotesData> GetNotes(NoteQueryDto query, string email,
-            CancellationToken cancellationToken);
+        Task<IEnumerable<Note>> GetAllNotes(string email, CancellationToken cancellationToken);
 
         Task<bool> UpdateNote(NoteDto note, string email, CancellationToken cancellationToken);
 
