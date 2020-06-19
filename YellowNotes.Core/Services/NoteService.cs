@@ -52,6 +52,7 @@ namespace YellowNotes.Core.Services
         {
             var notes = await repository.GetAllNotes(email, cancellationToken);
             notes = notes.Where(x => IsCategorySelected(x.CategoryId, query.CategoryIds));
+            var test = notes.Count();
 
             return new NotesDto
             {
