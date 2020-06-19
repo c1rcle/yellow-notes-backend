@@ -83,7 +83,7 @@ namespace YellowNotes.Core.Repositories
                 }
             }
 
-            record.CategoryId = note.CategoryId;
+            record.CategoryId = note.CategoryId ?? record.CategoryId;
             return await context.SaveChangesAsync(cancellationToken) > 0;
         }
 
